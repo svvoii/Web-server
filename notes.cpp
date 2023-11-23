@@ -325,4 +325,14 @@ This is a basic example of an NGINX configuration for a reverse proxy setup.
 NGINX can be further configured with additional directives and settings to meet your 
 specific requirements.
 
+For more detailed information about NGINX configuration see:
+`config_example.conf` file in the root of this repository.
+
+*/
+
+/*###################################################################################*/
+/* WHAT IS NGINX [ en-gin-ex ] */
+/*###################################################################################*/
+/*
+**
 */
