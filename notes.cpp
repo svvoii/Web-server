@@ -32,8 +32,8 @@
 ** Telnet to manually send HTTP requests to the server and observe the responses.
 **
 ** NGINX is a popular open-source web server that can also be used as a reverse
-** proxy, load balancer, and HTTP cache. In the context of an HTTP server project,
-** you can use NGINX as a reverse proxy to forward HTTP requests to your server.
+** proxy, load balancer, and HTTP cache. In the context of an HTTP server 
+** NGINX can be used as a reverse proxy to forward HTTP requests to the server.
 **
 ** The remark from the subject prompts to refer to the RFC and perform some tests
 ** with Telnet and NGINX by using publicly available web servers.
@@ -336,3 +336,124 @@ For more detailed information about NGINX configuration see:
 /*
 **
 */
+
+/*###################################################################################*/
+/* WHAT IS CGI [ see-gee-eye ] */
+/*###################################################################################*/
+/*
+**
+*/
+
+/*###################################################################################*/
+/* ALLOWED EXTERNAL FUNCTIONS, EXPLANATION */
+/*###################################################################################*/
+/*
+** execve, dup, dup2, pipe, strerror, gai_strerror, errno, fork, socketpair, htons,
+** htonl, ntohs, ntohl, select, poll, epoll (epoll_create, epoll_ctl, epoll_wait),
+** kqueue (kqueue, kevent), socket, accept, listen, send, recv, chdir bind, connect,
+** getaddrinfo, freeaddrinfo, setsockopt, getsockname, getprotobyname, fcntl, close,
+** read, write, waitpid, kill, signal, access, stat, open, opendir, readdir, closedir.
+**
+** 1) < < < < < < EXECVE > > > > > >
+** `execve` is a system call in C that is used to execute a program. It replaces the
+** current process image with a new process image specified by the path of the 
+** executable file.
+** `execve(const char *pathname, char *const argv[], char *const envp[])`
+** `pathname` is the path of the executable file.
+** `argv[]` is an array of strings that represent the command-line arguments passed
+** to the new program. The first argument should be the name of the executable itself.
+** `envp[]` is an array of strings that represent the environment variables (as `env` cmd).
+** When the `execve` is called, the current process is replaced by the new program specified
+** by the `pathname` argument. 
+** EXAMPLE:
+#include <unistd.h>
+
+int main() {
+	char *const argv[] = { "ls", "-l", NULL };
+	char *const envp[] = { NULL };
+
+	execve("/bin/ls", argv, envp);
+
+	// This line will only be reached if the execve function fails
+	perror("execve");
+	return 1;
+}
+**
+** 2) < < < < < < DUP > > > > > >
+** `dup` function in C is used to duplicate a file descriptor. It creates a copy of the
+** original file descriptor passed as an argument.
+** `int dup(int oldfd)` this will return a duplicate file descriptor of the oldfd.
+** EXAMPLE:
+#include <unistd.h>
+#include <fcntl.h>
+
+int main() {
+	int fd = open("file.txt", O_RDONLY);
+	if (fd == -1) {
+		perror("open");
+		return 1;
+	}
+
+	int new_fd = dup(fd);
+	if (new_fd == -1) {
+		perror("dup");
+		return 1;
+	}
+
+	// Use the new file descriptor to read from the file
+	char buffer[100];
+	ssize_t bytesRead = read(new_fd, buffer, sizeof(buffer));
+	if (bytesRead == -1) {
+		perror("read");
+		return 1;
+	}
+
+	// Print the contents of the file
+	write(STDOUT_FILENO, buffer, bytesRead);
+
+	close(fd);
+	close(new_fd);
+
+	return 0;
+}
+**
+** 3) < < < < < < DUP2 > > > > > >
+** `dup2` function in C is used to duplicate a file descriptor. It creates a copy of the
+** original file descriptor passed as an argument.
+** `int dup2(int oldfd, int newfd)` this will return a duplicate file descriptor of the oldfd.
+** -1 is returned if an error occurs.
+** EXAMPLE:
+#include <unistd.h>
+#include <fcntl.h>
+
+int main() {
+	int fd = open("file.txt", O_RDONLY);
+	if (fd == -1) {
+		perror("open");
+		return 1;
+	}
+
+	int new_fd = dup2(fd, 3);
+	if (new_fd == -1) {
+		perror("dup2");
+		return 1;
+	}
+
+	// Use the new file descriptor to read from the file
+	char buffer[100];
+	ssize_t bytesRead = read(new_fd, buffer, sizeof(buffer));
+	if (bytesRead == -1) {
+		perror("read");
+		return 1;
+	}
+
+	// Print the contents of the file
+	write(STDOUT_FILENO, buffer, bytesRead);
+
+	close(fd);
+	close(new_fd);
+
+	return 0;
+}
+*/
+
