@@ -1126,7 +1126,7 @@ When a client connects, a new socket is created for communication with the clien
 ## accept
 19 < < < < < < < < < < < < < < < < < < < ACCEPT > > > > > > > > > > > > > > > > > > > >
 
-`accept` function in C is usedin socket programming to accept a new connection on a
+`accept` function in C is used in socket programming to accept a new connection on a
 socket. It is typically used in servers that listen for incoming client connections.
 
 `int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)` it returns a file

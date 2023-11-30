@@ -18,9 +18,12 @@
 13) ntohl
 14) select
 15) poll
+15.1) struct pollfd
 16) epoll (epoll_create, epoll_ctl, epoll_wait),
 17) kqueue (kqueue, kevent), 
+17.1) struct kevent
 18) socket
+18.1) struct sockaddr
 19) accept
 20) listen
 21) send
