@@ -11,6 +11,7 @@
 int	main(int argc, char **argv) {
 
 	int 	sock = 0;
+	int 	connection;
 	long	valread;
 	struct sockaddr_in serv_addr;
 	const char 	*hello = "Hello from client";
@@ -39,7 +40,8 @@ int	main(int argc, char **argv) {
 	}
 
 	// 3. Connecting to server
-	if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+	connection = connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+	if (connection < 0) {
 		
 		perror("In connect");
 		exit(EXIT_FAILURE);

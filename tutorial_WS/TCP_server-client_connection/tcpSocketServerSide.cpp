@@ -1,3 +1,12 @@
+/*
+** Credit for this tutorial to:
+**
+** Skrew Everything at https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa
+** and
+** Eric O Meehan at https://www.youtube.com/watch?v=YwHErWJIh6Y&t=11s
+**
+*/
+
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
