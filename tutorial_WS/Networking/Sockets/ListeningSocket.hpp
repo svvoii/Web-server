@@ -28,7 +28,8 @@ class ListeningSocket : public BindingSocket {
 
 		ListeningSocket(int domain, int service, int protocol, int port, u_long interface,
 			int backlog);
-		~ListeningSocket();
+		// virtual destructor is needed a child class is inheriting from this class
+		virtual ~ListeningSocket();
 
 		// Getters
 		int	getBacklog() const;

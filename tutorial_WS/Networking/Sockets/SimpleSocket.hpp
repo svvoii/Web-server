@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <string>
+#include <cstdio> // perror()
+#include <cstdlib> // exit()
 #include <unistd.h> // close()
 #include <sys/socket.h> // socket(), bind(), listen(), accept()
 #include <netinet/in.h> // sockaddr_in, INADDR_ANY

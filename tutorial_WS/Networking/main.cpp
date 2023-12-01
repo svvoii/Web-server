@@ -1,7 +1,9 @@
 #include "HeaderSockets.hpp"
+#include "Servers/TestServer.hpp"
 
 int	main() {
 
+	/*
 	std::cout << "Starting server..." << std::endl;
 
 	std::cout << "Binding socket..." << std::endl;
@@ -11,4 +13,7 @@ int	main() {
 	ListeningSocket	listeningSocket(AF_INET, SOCK_STREAM, 0, 8080, INADDR_ANY, 10);
 
 	std::cout << "Success!" << std::endl;
+	*/
+
+	TestServer	server;
 }

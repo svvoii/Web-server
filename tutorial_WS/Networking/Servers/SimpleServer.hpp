@@ -8,24 +8,23 @@
 class SimpleServer {
 	private:
 
-		BindingSocket	_bindingSocket;
-		ListeningSocket	_listeningSocket;
+		ListeningSocket *	_socket;
+
+		virtual void		_accept() = 0;
+		virtual void		_handle() = 0;
+		virtual void		_respond() = 0;
 
 	public:
 
-		SimpleServer();
+		SimpleServer(int domain, int service, int protocol, 
+				int port, u_long interface, int backlog);
 		~SimpleServer();
 
 		// Getters
-		BindingSocket	getBindingSocket() const;
-		ListeningSocket	getListeningSocket() const;
+		ListeningSocket *	getSocket();
 
-		// Setters
-		void	setBindingSocket(BindingSocket bindingSocket);
-		void	setListeningSocket(ListeningSocket listeningSocket);
+		virtual void		run() = 0;
 
-		// Methods
-		void	startServer();
 };
 
 
