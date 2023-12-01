@@ -15,7 +15,6 @@ class SimpleSocket {
 
 		int					_socket_fd;
 		struct sockaddr_in	_address;
-		int					_connection;
 	
 	public:
 
@@ -25,15 +24,13 @@ class SimpleSocket {
 		// Getters
 		int					getSocketFD() const;
 		struct sockaddr_in	getAddress() const;
-		int					getConnection() const;
 
 		// Setters
 		void				setSocketFD(int socket_fd);
-		void				setConnection(int connection);
 
 		// This must be implemented by the child class. 
 		// In the implementation either `bind()` or `connect()` to be used (SERVER vs CLIENT)
-		virtual int		connectToNetwork(int socket_fd, struct sockaddr_in address) = 0;
+		virtual void	connectToNetwork(int socket_fd, struct sockaddr_in address) = 0;
 
 		// Also can be a virtual so that the child class can specify the behavior
 		void			testConnection(int itemToTest);

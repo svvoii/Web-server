@@ -13,14 +13,25 @@ ListeningSocket::ListeningSocket(
 	this->_listening = 0;
 
 	startListenToNetwork();
-	testConnection(this->_listening);
 }
 
 ListeningSocket::~ListeningSocket() {
 }
 
-void	ListeningSocket::startListenToNetwork() {
+// Getters
+int		ListeningSocket::getBacklog() const {
 
-	this->_listening = listen(getSocketFD(), _backlog);
+	return this->_backlog;
 }
 
+int		ListeningSocket::getListening() const {
+
+	return this->_listening;
+}
+
+void	ListeningSocket::startListenToNetwork() {
+
+	_listening = listen(getSocketFD(), _backlog);
+
+	testConnection(_listening);
+}

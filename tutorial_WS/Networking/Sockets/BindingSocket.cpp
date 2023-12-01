@@ -11,30 +11,28 @@
 BindingSocket::BindingSocket(int domain, int service, int protocol, int port, u_long interface)
 	: SimpleSocket(domain, service, protocol, port, interface) {
 
-	int	connection = 0;
+	_bindStatus = 0;
 
-	// Establish connection, bind the socket to a port, check for error
-	connection = connectToNetwork(this->getSocketFD(), this->getAddress());
-	setConnection(connection); // ???
-	testConnection(this->getConnection());
-	//testConnection(connection);
+	connectToNetwork(this->getSocketFD(), this->getAddress());
 }
 
 BindingSocket::~BindingSocket() {
 }
 
+// Getters
+int		BindingSocket::getBindStatus() const {
+
+	return (this->_bindStatus);
+}
+
 /*
-** This method is used to bind the socket to a port.
+** This method is used to bind the socket to a port on a server side.
 ** It is a virtual method in the parent class and must be implemented here.
-**
-** The return from `connectToNetwork()` will be assigned to the `connection` variable
-** in the parent class constructor.. `connection = connectToNetwork(socket_fd, address);`
 */
-int	BindingSocket::connectToNetwork(int socket_fd, struct sockaddr_in address) {
+void	BindingSocket::connectToNetwork(int socket_fd, struct sockaddr_in address) {
 
-	int	bindStatus = 0;
-
-	bindStatus = bind(socket_fd, (struct sockaddr *)&address, sizeof(address));
-	return (bindStatus);
-	// the error handling is done in the constructor above with `testConnection()`
+	// Establishing binding connection to the network
+	_bindStatus = bind(socket_fd, (struct sockaddr *)&address, sizeof(address));
+	// error check
+	this->testConnection(_bindStatus);
 }

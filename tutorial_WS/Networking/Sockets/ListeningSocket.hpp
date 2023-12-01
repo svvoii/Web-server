@@ -26,15 +26,13 @@ class ListeningSocket : public BindingSocket {
 
 	public:
 
-		ListeningSocket(
-			int domain, 
-			int service, 
-			int protocol, 
-			int port, 
-			u_long interface,
+		ListeningSocket(int domain, int service, int protocol, int port, u_long interface,
 			int backlog);
-
 		~ListeningSocket();
+
+		// Getters
+		int	getBacklog() const;
+		int	getListening() const;
 
 		void	startListenToNetwork();
 };

@@ -12,21 +12,9 @@ SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port, u_lo
 
 	// Creating socket, getting file descriptor 
 	this->_socket_fd = socket(domain, service, protocol); // AF_INET = IPv4, SOCK_STREAM = TCP, 0 = IP
-	/*
-	if (this->socket_fd == 0) {
-		
-		perror("In socket");
-		exit(EXIT_FAILURE);
-	}
-	*/
+	// error checking
 	testConnection(this->_socket_fd);
 
-	/* This must be implemented by the child class. See BindingSocket.cpp constructor
-	// Establish connection
-	// Require to implement this method in the child class with either `bind()` or `connect()`
-	this->connection = connectToNetwork(socket_fd, address);
-	testConnection(this->connection);
-	*/
 }
 
 /*
@@ -50,22 +38,12 @@ struct sockaddr_in	SimpleSocket::getAddress() const {
 	return (this->_address);
 }
 
-int		SimpleSocket::getConnection() const {
-
-	return (this->_connection);
-}
-
 /*
 ** Setters
 */
 void	SimpleSocket::setSocketFD(int socket_fd) {
 
 	this->_socket_fd = socket_fd;
-}
-
-void	SimpleSocket::setConnection(int connection) {
-
-	this->_connection = connection;
 }
 
 /*

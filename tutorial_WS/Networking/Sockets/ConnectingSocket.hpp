@@ -10,13 +10,20 @@
 */
 
 class ConnectingSocket : public SimpleSocket {
+	private:
+	
+		int	_connectStatus;
+
 	public:
 
 		ConnectingSocket(int domain, int service, int protocol, int port, u_long interface);
 		~ConnectingSocket();
 
+		// Getters
+		int	getConnectStatus() const;
+
 		// This method is virtual in parent and must be implemented by the child class. 
-		int		connectToNetwork(int socket_fd, struct sockaddr_in address);
+		void	connectToNetwork(int socket_fd, struct sockaddr_in address);
 };
 
 #endif
