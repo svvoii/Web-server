@@ -11,6 +11,20 @@
 
 /*
 ** This goingto be the parent class for TCP or UDP sockets
+** and will be an abstract class, with no instances possible.
+**
+** This class will provide the basic interface for two main
+** types of sockets: server side and client side.
+**
+** `BindingSocket` will inherit from this class and offer 
+** functionality for server side sockets with `bind()`.
+**
+** `ConnectingSocket` will inherit from this class and offer
+** functionality for client side sockets with `connect()`.
+**
+** Additionally, `ListeningSocket` will be a child class of
+** `BindingSocket` and will offer functionality for server side
+** to listen for incoming connections with `listen()`.
 */
 class SimpleSocket {
 	private:
@@ -34,7 +48,7 @@ class SimpleSocket {
 		// In the implementation either `bind()` or `connect()` to be used (SERVER vs CLIENT)
 		virtual void	connectToNetwork(int socket_fd, struct sockaddr_in address) = 0;
 
-		// Also can be a virtual so that the child class can specify the behavior
+		// This will simply check the return value of `bind()` or `connect()` and exit if < 0
 		void			testConnection(int itemToTest);
 };
 

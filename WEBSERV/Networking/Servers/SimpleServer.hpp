@@ -10,6 +10,7 @@ class SimpleServer {
 
 		ListeningSocket *	_socket;
 
+		// Must be implemented by the child class.
 		virtual void		_accept() = 0;
 		virtual void		_handle() = 0;
 		virtual void		_respond() = 0;

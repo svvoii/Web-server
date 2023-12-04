@@ -1,5 +1,6 @@
 #include "HeaderSockets.hpp"
 #include "Servers/TestServer.hpp"
+#include "Servers/HttpServer.hpp"
 
 int	main() {
 
@@ -15,5 +16,8 @@ int	main() {
 	std::cout << "Success!" << std::endl;
 	*/
 
-	TestServer	server;
+	//TestServer	server;
+	
+	// All arguments are for TESTING PURPOSES, declared in `TestServer.hpp`
+	HttpServer server(AF_INET, SOCK_STREAM, PROTOCOL, PORT, INADDR_ANY, BACKLOG);
 }

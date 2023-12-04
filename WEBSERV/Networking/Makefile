@@ -13,6 +13,7 @@ SRCS = main.cpp \
 	ListeningSocket.cpp \
 	ConnectingSocket.cpp \
 	SimpleServer.cpp \
+	HttpServer.cpp \
 	TestServer.cpp
 
 OBJS = $(SRCS:.cpp=.o)
