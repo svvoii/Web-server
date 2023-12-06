@@ -2,7 +2,7 @@
 
 TestServer::TestServer() 
 	: SimpleServer(
-					DOMAIN,
+					DOM,
 					SERVICE, 
 					PROTOCOL, 
 					PORT, 

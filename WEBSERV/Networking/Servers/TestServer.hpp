@@ -22,7 +22,7 @@
 #define BUFSIZE 10240
 
 // FOR TESTING PURPOSES ONLY
-#define DOMAIN		AF_INET
+#define DOM			AF_INET
 #define SERVICE		SOCK_STREAM
 #define PROTOCOL	0
 #define PORT		8080 // 80 might not work due to privileged ports access only for root users, try 8080

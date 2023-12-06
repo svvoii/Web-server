@@ -14,7 +14,8 @@ SRCS = main.cpp \
 	ConnectingSocket.cpp \
 	SimpleServer.cpp \
 	HttpServer.cpp \
-	TestServer.cpp
+	TestServer.cpp \
+	HttpRequest.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

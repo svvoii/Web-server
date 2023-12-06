@@ -4,10 +4,7 @@ HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long i
 		: SimpleServer(domain, service, protocol, port, interface, backlog) {
 
 	std::cout << MAGENTA << "\tHttpServer constructor called." << RESET << std::endl;
-	_requestMethod = NONE;
-	_typeGET = NORMAL;
-	_path = "";
-	_buffer = "";
+	//_buffRequest = "";
 	_new_socket = -1;
 
 	// Launching the server.. `_accept()` >>> `_handle()` >>> `_respond()`
@@ -17,53 +14,6 @@ HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long i
 HttpServer::~HttpServer() {
 	
 	std::cout << RED << "\t[~] HttpServer destructor called." << RESET << std::endl;
-}
-
-/*
-** Setters
-*/
-void	HttpServer::_setRequestMethod(std::string requestMethod) {
-
-	if (requestMethod == "GET") {
-		_requestMethod = GET;
-	}
-	else if (requestMethod == "POST") {
-		_requestMethod = POST;
-	}
-	else if (requestMethod == "HEAD") {
-		_requestMethod = HEAD;
-	}
-	else if (requestMethod == "PUT") {
-		_requestMethod = PUT;
-	}
-	else if (requestMethod == "DELETE") {
-		_requestMethod = DELETE;
-	}
-	else if (requestMethod == "CONNECT") {
-		_requestMethod = CONNECT;
-	}
-	else if (requestMethod == "OPTIONS") {
-		_requestMethod = OPTIONS;
-	}
-	else if (requestMethod == "TRACE") {
-		_requestMethod = TRACE;
-	}
-	else if (requestMethod == "PATCH") {
-		_requestMethod = PATCH;
-	}
-	else {
-		_requestMethod = NONE;
-	}
-}
-
-void	HttpServer::_setTypeGET(std::string typeGet) {
-
-	if (typeGet == "/favicon.ico") {
-		_typeGET = FAVICON;
-	}
-	else {
-		_typeGET = NORMAL;
-	}
 }
 
 void	HttpServer::_accept() {
@@ -105,7 +55,8 @@ void	HttpServer::_accept() {
 	}
 	else {
 		std::cout << GREEN << "Data received from the web-browser and added to the `_buffer`, bytesRead: [" << bytesRead << "]." << RESET << std::endl;
-		_buffer.assign(buff, bytesRead);
+		_httpRequest.buffer.assign(buff, bytesRead);
+		//_buffRequest.assign(buff, bytesRead);
 	}
 }
 /*
@@ -114,25 +65,33 @@ void	HttpServer::_accept() {
 ** The client will use the same port number for the duration of the current connection.
 */
 
+/*
+** This is where the request from the web-browser is parsed.
+** `HttpRequest` class is used to parse the request and 
+** store the individual parts of the request in the class members.
+*/
 void	HttpServer::_handle() {
 
 	std::cout << MAGENTA << "in `_handle()`.. Here is the `_buffer` (request from the web-browser):" << RESET << std::endl;
-	std::cout << _buffer << std::endl;
+	/*
+	std::cout << _httpRequest._buffer << std::endl;
 
 	std::string type;
+	std::string path;
 
-	std::istringstream iss(_buffer);
-	iss >> type >> _path;
+	std::istringstream iss(_httpRequest._buffer);
+	iss >> type >> path;
 
-	_setRequestMethod(type);
+	//_setRequestMethod(type);
 
 	// If the request is a GET request, we need to check if it is a favicon request or a normal request
-	_setTypeGET(_path);	
+	//_setTypeGET(_path);	
 
 	std::cout << YELLOW;
-	std::cout << "Request Method: [" << type << "], enum:[" << _requestMethod << "]" << std::endl;
-	std::cout << "Path: [" << _path << "], enum:[" << _typeGET << "]" << std::endl;
+	std::cout << "Request Method: [" << type << "]" << std::endl;
+	std::cout << "Path: [" << path << "]" << std::endl;
 	std::cout << RESET;
+	*/
 
 }
 
