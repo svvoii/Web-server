@@ -4,7 +4,7 @@ HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long i
 		: SimpleServer(domain, service, protocol, port, interface, backlog) {
 
 	std::cout << MAGENTA << "\tHttpServer constructor called." << RESET << std::endl;
-	//_buffRequest = "";
+	_buffRequest = "";
 	_new_socket = -1;
 
 	// Launching the server.. `_accept()` >>> `_handle()` >>> `_respond()`
@@ -14,6 +14,8 @@ HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long i
 HttpServer::~HttpServer() {
 	
 	std::cout << RED << "\t[~] HttpServer destructor called." << RESET << std::endl;
+
+	delete httpRequest;
 }
 
 void	HttpServer::_accept() {
@@ -37,7 +39,7 @@ void	HttpServer::_accept() {
 	std::cout << "[+] Connection accepted." << std::endl;
 	std::cout << "IP: " << inet_ntoa(address.sin_addr) << std::endl;
 	std::cout << BLUE;
-	// !! emepheral port*
+	// !! emepheral port* ??
 	std::cout << "Port (ephemeral) ntohs[" << ntohs(address.sin_port) << "], (client side)" << std::endl;
 	std::cout << "Saving the request from the web-browser in `_buffer` with `recv()`." << std::endl;
 	std::cout << RESET;
@@ -55,12 +57,11 @@ void	HttpServer::_accept() {
 	}
 	else {
 		std::cout << GREEN << "Data received from the web-browser and added to the `_buffer`, bytesRead: [" << bytesRead << "]." << RESET << std::endl;
-		_httpRequest.buffer.assign(buff, bytesRead);
-		//_buffRequest.assign(buff, bytesRead);
+		_buffRequest.assign(buff, bytesRead);
 	}
 }
 /*
-** `ephemeral port` is a short-lived transport protocol port for Internet Protocol (IP) communications.
+** !! ?? `ephemeral port` is a short-lived transport protocol port for Internet Protocol (IP) communications.
 ** It was set by the kernel on the client side, and was used by the server to send back responses.
 ** The client will use the same port number for the duration of the current connection.
 */
@@ -72,26 +73,25 @@ void	HttpServer::_accept() {
 */
 void	HttpServer::_handle() {
 
-	std::cout << MAGENTA << "in `_handle()`.. Here is the `_buffer` (request from the web-browser):" << RESET << std::endl;
-	/*
-	std::cout << _httpRequest._buffer << std::endl;
+	std::cout << MAGENTA << "in `_handle()`.. passing request from web-browser to the `HttpRequest` class." << RESET << std::endl;
 
-	std::string type;
-	std::string path;
+	// Passing the request from the web-browser to the `HttpRequest` class for parsing
+	httpRequest = new HttpRequest(_buffRequest);
 
-	std::istringstream iss(_httpRequest._buffer);
-	iss >> type >> path;
+	std::cout << BLUE << "Checking parsed data and Getters of `HttpRequest` class:" << RESET << std::endl;
+	std::cout << std::endl;
+	std::cout << CYAN << "Method:\t" << RESET << httpRequest->getMethod() << std::endl;
+	std::cout << CYAN << "URI:   \t" << RESET << httpRequest->getUri() << std::endl;
+	std::cout << CYAN << "HTTP V:\t" << RESET << httpRequest->getHttpVersion() << std::endl;
 
-	//_setRequestMethod(type);
+	std::cout << std::endl;
+	std::cout << CYAN << "Headers:" << RESET << std::endl;
+	std::map<std::string, std::string> headers = httpRequest->getHeaders();
 
-	// If the request is a GET request, we need to check if it is a favicon request or a normal request
-	//_setTypeGET(_path);	
-
-	std::cout << YELLOW;
-	std::cout << "Request Method: [" << type << "]" << std::endl;
-	std::cout << "Path: [" << path << "]" << std::endl;
-	std::cout << RESET;
-	*/
+	for (std::map<std::string, std::string>::iterator it = headers.begin(); it != headers.end(); ++it) {
+		std::cout << "\tkey[" << it->first << "]:\tvalue[" << it->second << "]" << std::endl;
+	}
+	std::cout << std::endl;
 
 }
 
@@ -99,10 +99,17 @@ void	HttpServer::_respond() {
 
 	std::cout << MAGENTA << "in `_respond()`.." << RESET << std::endl;
 
-	std::string	response;
-	response = "Wake up, Neo...\nThe Matrix has you...\nFollow the white rabbit.\nKnock, knock, Neo.";
+	// Passing the request from the web-browser to the `HttpResponse` class for generating the response
+	HttpResponse	response(httpRequest);
 
-	send(_new_socket, response.c_str(), response.length(), 0);
+	std::string		responseString = response.getResponse();
+
+	/*
+	std::cout << GREEN << "Response:" << RESET << std::endl;
+	std::cout << responseString << std::endl;
+	*/
+
+	send(_new_socket, responseString.c_str(), responseString.length(), 0);
 
 	std::cout << GREEN; 
 	std::cout << "Responce message sent" << std::endl;
@@ -110,6 +117,9 @@ void	HttpServer::_respond() {
 	std::cout << RESET;
 
 	close(_new_socket);
+
+	// Deleting the `HttpRequest` object
+	delete httpRequest;
 }
 
 void	HttpServer::run() {

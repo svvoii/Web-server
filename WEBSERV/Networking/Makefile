@@ -16,6 +16,7 @@ SRCS = main.cpp \
 	HttpServer.cpp \
 	TestServer.cpp \
 	HttpRequest.cpp \
+	HttpResponse.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

@@ -1,30 +1,110 @@
 #include "HttpRequest.hpp"
 
-HttpRequest::HttpRequest() {
+HttpRequest::HttpRequest(const std::string& buffer) {
 
-	std::stringstream ss(buffer);
-	std::string line;
-	std::string body;
+	std::cout << MAGENTA;
+	std::cout << "\tHttpRequest constructor called." << std::endl;
+	std::cout << "Here is the request from the browser:";
+	std::cout << RESET << std::endl;
+	std::cout << buffer << std::endl;
 
-	// Parse the request line
-	std::getline(ss, line);
-	parseRequestLine(line);
+	std::istringstream	ss(buffer);
+	std::string			line;
+	std::string			body;
 
-	// Parse the headers
-	while (std::getline(ss, line) && line != "\r") {
-		parseHeader(line);
+	std::cout << MAGENTA << "Parsing the request ..." << RESET << std::endl;
+	std::cout << std::endl;
+
+	// Parsing each line into map by the first space
+	std::cout << CYAN << "..parseLine().." << RESET << std::endl;
+	while (std::getline(ss, line) && line != "\n\r") {
+
+		line = trim(line);
+		//std::cout << "trimmed line: [" << line << "]" << std::endl;
+		//std::flush(std::cout);
+
+		parseLine(line);
 	}
+	std::cout << std::endl;
 
-	// Parse the body
-	while (std::getline(ss, line)) {
-		body += line;
-	}
-	parseBody(body);
+	// Extracting the request line, method, uri, http version
+	parseRequestLine();
+
+	// Extracting the body of the request
+	// TODO: Check if the request has a body
 }
 
 HttpRequest::~HttpRequest() {
 
 }
+
+typedef std::map<std::string, std::string>::iterator MapIterator;
+void	HttpRequest::parseRequestLine() {
+
+	std::cout << CYAN << "in prseRequestLine().." << RESET << std::endl;
+	//std::cout << "line:\t" << line << std::endl;
+	std::cout << std::endl;
+
+	for (MapIterator it = _headers.begin(); it != _headers.end(); it++) {
+		/*
+		std::cout << "\tkey:  [" << it->first << "]" << std::endl;
+		std::cout << "\tvalue:[" << it->second << "]" << std::endl;
+		*/
+		if (isMethod(it->first)) {
+			_method = isMethod(it->first);
+
+			std::istringstream	ss(it->second);
+			std::string			word;
+
+			// Get the URI path
+			std::getline(ss, word, ' ');
+			_uriPath = word;
+
+			// Get the HTTP version
+			std::getline(ss, word, ' ');
+			_httpVersion = word;
+
+			_headers.erase(it);
+
+			break ;
+		}
+	}
+}
+
+void	HttpRequest::parseLine(const std::string& line) {
+
+	//std::cout << CYAN << "in parseLine().." << RESET << std::endl;
+
+	std::istringstream	ss(line);
+	std::string			key;
+	std::string			value;
+
+	std::getline(ss, key, ' ');
+	std::getline(ss, value);
+	
+	key = trim(key);
+	value = trim(value);
+
+	//std::cout << "\tkey:  [" << key << "]" << std::endl;
+	//std::cout << "\tvalue:[" << value << "]" << std::endl;
+
+	if (key.length() != 0 || value.length() != 0) {
+		_headers.insert(std::make_pair(key, value));
+	}
+	
+	//_headers[key] = value;
+}
+
+/*
+void	HttpRequest::parseBody(const std::string& body) {
+
+	std::cout << CYAN << "in parseBody().. " << RESET << std::endl;
+	std::cout << "body:" << RESET << "[" << body << "]" << std::endl;
+	std::cout << std::endl;
+
+	_body = body;
+}
+*/
 
 // Getters
 std::string	HttpRequest::getMethod() {
@@ -57,62 +137,55 @@ std::string	HttpRequest::getHttpVersion() {
 	return _httpVersion;
 }
 
+/*
 std::string	HttpRequest::getBody() {
 	return _body;
 }
+*/
 
 std::map<std::string, std::string>	HttpRequest::getHeaders() {
 	return _headers;
 }
 
-// Private methods
-void	HttpRequest::parseRequestLine(const std::string& line) {
+/*
+** Clean parsing helpers
+** Remove unnecessary spaces and new line characters
+*/
+std::string	HttpRequest::trim(const std::string& str) {
 
-	std::stringstream	ss(line);
-	std::string			word;
+	std::string	trimmed;
 
-	// Get the request method
-	std::getline(ss, word, ' ');
-	if (word == "GET") {
-		_method = GET;
+	trimmed = str;
+
+	trimmed.erase(trimmed.find_last_not_of('\r') + 1);
+	trimmed.erase(trimmed.find_last_not_of('\n') + 1);
+	trimmed.erase(0, trimmed.find_first_not_of('\t'));
+	trimmed.erase(trimmed.find_last_not_of('\t') + 1);
+	trimmed.erase(0, trimmed.find_first_not_of(' '));
+	trimmed.erase(trimmed.find_last_not_of(' ') + 1);
+	trimmed.erase(trimmed.find_last_not_of(':') + 1);
+
+	return trimmed;
+}
+
+enum requestMethod	HttpRequest::isMethod(const std::string& str) {
+
+	if (str == "GET") {
+		return GET;
 	}
-	else if (word == "POST") {
-		_method = POST;
+	else if (str == "POST") {
+		return POST;
 	}
-	else if (word == "HEAD") {
-		_method = HEAD;
+	else if (str == "HEAD") {
+		return HEAD;
 	}
-	else if (word == "PUT") {
-		_method = PUT;
+	else if (str == "PUT") {
+		return PUT;
 	}
-	else if (word == "DELETE") {
-		_method = DELETE;
+	else if (str == "DELETE") {
+		return DELETE;
 	}
 	else {
-		_method = NONE;
+		return NONE;
 	}
-
-	// Get the URI path
-	std::getline(ss, word, ' ');
-	_uriPath = word;
-
-	// Get the HTTP version
-	std::getline(ss, word, ' ');
-	_httpVersion = word;
-}
-
-void	HttpRequest::parseHeader(const std::string& line) {
-
-	std::stringstream	ss(line);
-	std::string			key;
-	std::string			value;
-
-	std::getline(ss, key, ':');
-	std::getline(ss, value, ':');
-	_headers[key] = value;
-}
-
-void	HttpRequest::parseBody(const std::string& body) {
-
-	_body = body;
 }

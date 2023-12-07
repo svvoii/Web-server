@@ -3,6 +3,8 @@
 
 #include "SimpleServer.hpp"
 #include "HttpRequest.hpp"
+#include "HttpResponse.hpp"
+
 #include <arpa/inet.h> // inet_ntoa
 #include <sstream> // std::stringstream
 #include <map> // std::map
@@ -16,8 +18,7 @@
 class HttpServer : public SimpleServer {
 	private:
 
-		HttpRequest			_httpRequest; // Class to parse the request from the browser
-		//std::string			_buffRequest; // To store the body of the request from the browser/client
+		std::string			_buffRequest; // To store the body of the request from the browser/client
 		int					_new_socket; // To store the new socket created by accept()
 
 		void				_accept();
@@ -25,6 +26,9 @@ class HttpServer : public SimpleServer {
 		void				_respond();
 
 	public:
+
+		//HttpRequest			httpRequest(_buffRequest); // Class to parse the request from the browser
+		HttpRequest			*httpRequest; // Class to parse the request from the browser
 
 		HttpServer(int domain, 
 				int service, 

@@ -16,6 +16,14 @@ SimpleServer::~SimpleServer() {
 	}
 }
 
+void	SimpleServer::deleteSocket() {
+
+	if (_socket != NULL) {
+		delete _socket;
+		_socket = NULL;
+	}
+}
+
 ListeningSocket *	SimpleServer::getSocket() {
 
 	return _socket;

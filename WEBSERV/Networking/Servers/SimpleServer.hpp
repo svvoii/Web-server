@@ -21,6 +21,8 @@ class SimpleServer {
 				int port, u_long interface, int backlog);
 		~SimpleServer();
 
+		void				deleteSocket();
+
 		// Getters
 		ListeningSocket *	getSocket();
 
