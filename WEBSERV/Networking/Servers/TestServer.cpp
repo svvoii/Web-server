@@ -22,10 +22,10 @@ void	TestServer::_accept() {
 
 	std::cout << BLUE << "in (TestServer::_accept())" << RESET << std::endl;
 
-	struct sockaddr_in	address = getSocket()->getAddress();
+	struct sockaddr_in	address = getSocket().getAddress();
 	int					addrlen = sizeof(address);
 
-	_new_socket = accept(getSocket()->getSocketFD(), 
+	_new_socket = accept(getSocket().getSocketFD(), 
 							(struct sockaddr *)&address, 
 							(socklen_t*)&addrlen);
 

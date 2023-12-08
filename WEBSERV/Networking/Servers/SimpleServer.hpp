@@ -8,7 +8,8 @@
 class SimpleServer {
 	private:
 
-		ListeningSocket *	_socket;
+		//ListeningSocket *	_socket;
+		ListeningSocket		_socket;
 
 		// Must be implemented by the child class.
 		virtual void		_accept() = 0;
@@ -21,10 +22,8 @@ class SimpleServer {
 				int port, u_long interface, int backlog);
 		~SimpleServer();
 
-		void				deleteSocket();
-
 		// Getters
-		ListeningSocket *	getSocket();
+		ListeningSocket &	getSocket();
 
 		virtual void		run() = 0;
 

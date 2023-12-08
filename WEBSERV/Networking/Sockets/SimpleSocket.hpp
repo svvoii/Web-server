@@ -9,6 +9,15 @@
 #include <sys/socket.h> // socket(), bind(), listen(), accept()
 #include <netinet/in.h> // sockaddr_in, INADDR_ANY
 
+// SOME COLORS FOR DEBUGGING
+#define RED "\033[1;31m"
+#define GREEN "\033[1;32m"
+#define YELLOW "\033[1;33m"
+#define BLUE "\033[1;34m"
+#define MAGENTA "\033[1;35m"
+#define CYAN "\033[1;36m"
+#define RESET "\033[0m"
+
 /*
 ** This goingto be the parent class for TCP or UDP sockets
 ** and will be an abstract class, with no instances possible.

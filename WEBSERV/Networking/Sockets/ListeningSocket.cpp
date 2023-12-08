@@ -9,6 +9,8 @@ ListeningSocket::ListeningSocket(
 	int backlog)
 	: BindingSocket(domain, service, protocol, port, interface) {
 
+	std::cout << MAGENTA << "\t[ ListeningSocket ] constructor called." << RESET << std::endl;
+
 	this->_backlog = backlog;
 	this->_listening = 0;
 
@@ -16,6 +18,8 @@ ListeningSocket::ListeningSocket(
 }
 
 ListeningSocket::~ListeningSocket() {
+
+	std::cout << RED << "\t[~] ListeningSocket destructor called." << RESET << std::endl;
 }
 
 // Getters

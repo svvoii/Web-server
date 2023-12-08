@@ -32,8 +32,8 @@ class ListeningSocket : public BindingSocket {
 		virtual ~ListeningSocket();
 
 		// Getters
-		int	getBacklog() const;
-		int	getListening() const;
+		int		getBacklog() const;
+		int		getListening() const;
 
 		void	startListenToNetwork();
 };

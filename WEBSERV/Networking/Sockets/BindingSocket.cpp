@@ -11,12 +11,16 @@
 BindingSocket::BindingSocket(int domain, int service, int protocol, int port, u_long interface)
 	: SimpleSocket(domain, service, protocol, port, interface) {
 
+	std::cout << MAGENTA << "\t[ BindingSocket ] constructor called." << RESET << std::endl;
+
 	_bindStatus = 0;
 
 	connectToNetwork(this->getSocketFD(), this->getAddress());
 }
 
 BindingSocket::~BindingSocket() {
+
+	std::cout << RED << "\t[~] BindingSocket destructor called." << RESET << std::endl;
 }
 
 // Getters

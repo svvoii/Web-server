@@ -27,8 +27,9 @@ class HttpServer : public SimpleServer {
 
 	public:
 
-		//HttpRequest			httpRequest(_buffRequest); // Class to parse the request from the browser
-		HttpRequest			*httpRequest; // Class to parse the request from the browser
+		// Pointer to a Class to parse the request from the browser
+		// `HttpRequest` object instantiated on the heap in the `_handle()` method
+		HttpRequest			*httpRequest;
 
 		HttpServer(int domain, 
 				int service, 

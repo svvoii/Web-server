@@ -5,6 +5,8 @@
 */
 SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port, u_long interface) {
 
+	std::cout << MAGENTA << "\t[ SimpleSocket - parrent ] constructor called." << RESET << std::endl;
+
 	// Defining address structure
 	this->_address.sin_family = domain; // AF_INET;
 	this->_address.sin_port = htons(port); // htons(PORT);
@@ -22,6 +24,9 @@ SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port, u_lo
 */
 SimpleSocket::~SimpleSocket() {
 
+	std::cout << RED << "\t[~] SimpleSocket destructor called." << RESET << std::endl;
+
+	// This might leak when server is interrupted with ctrl+c
 	close(this->_socket_fd);
 }
 

@@ -4,8 +4,10 @@ HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long i
 		: SimpleServer(domain, service, protocol, port, interface, backlog) {
 
 	std::cout << MAGENTA << "\tHttpServer constructor called." << RESET << std::endl;
+
 	_buffRequest = "";
 	_new_socket = -1;
+	httpRequest = NULL;
 
 	// Launching the server.. `_accept()` >>> `_handle()` >>> `_respond()`
 	run();
@@ -15,7 +17,11 @@ HttpServer::~HttpServer() {
 	
 	std::cout << RED << "\t[~] HttpServer destructor called." << RESET << std::endl;
 
-	delete httpRequest;
+	// Deleting the `HttpRequest` object on proper server shutdown
+	if (httpRequest != NULL) {
+		delete httpRequest;
+		httpRequest = NULL;
+	}
 }
 
 void	HttpServer::_accept() {
@@ -23,10 +29,10 @@ void	HttpServer::_accept() {
 	std::cout << std::endl;
 	std::cout << MAGENTA << "in `_accept()`.." << RESET << std::endl;
 	
-	struct sockaddr_in	address = getSocket()->getAddress();
+	struct sockaddr_in	address = getSocket().getAddress();
 	int					addrlen = sizeof(address);
 
-	_new_socket = accept(getSocket()->getSocketFD(), 
+	_new_socket = accept(getSocket().getSocketFD(), 
 					(struct sockaddr *)&address, 
 					(socklen_t *)&addrlen);
 
@@ -74,8 +80,10 @@ void	HttpServer::_accept() {
 void	HttpServer::_handle() {
 
 	std::cout << MAGENTA << "in `_handle()`.. passing request from web-browser to the `HttpRequest` class." << RESET << std::endl;
+	std::cout << std::endl;
 
 	// Passing the request from the web-browser to the `HttpRequest` class for parsing
+	// Should be allocated on the heap in this case to use it in `_respond()` method
 	httpRequest = new HttpRequest(_buffRequest);
 
 	std::cout << BLUE << "Checking parsed data and Getters of `HttpRequest` class:" << RESET << std::endl;
@@ -118,8 +126,9 @@ void	HttpServer::_respond() {
 
 	close(_new_socket);
 
-	// Deleting the `HttpRequest` object
+	// Deleting the `HttpRequest` object right after the response is sent to avoid memory leaks
 	delete httpRequest;
+	httpRequest = NULL;
 }
 
 void	HttpServer::run() {

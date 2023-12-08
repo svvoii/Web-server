@@ -35,7 +35,8 @@ HttpRequest::HttpRequest(const std::string& buffer) {
 }
 
 HttpRequest::~HttpRequest() {
-
+	
+	std::cout << RED << "\t[~] HttpRequest destructor called." << RESET << std::endl;
 }
 
 typedef std::map<std::string, std::string>::iterator MapIterator;
@@ -91,20 +92,8 @@ void	HttpRequest::parseLine(const std::string& line) {
 	if (key.length() != 0 || value.length() != 0) {
 		_headers.insert(std::make_pair(key, value));
 	}
-	
-	//_headers[key] = value;
+
 }
-
-/*
-void	HttpRequest::parseBody(const std::string& body) {
-
-	std::cout << CYAN << "in parseBody().. " << RESET << std::endl;
-	std::cout << "body:" << RESET << "[" << body << "]" << std::endl;
-	std::cout << std::endl;
-
-	_body = body;
-}
-*/
 
 // Getters
 std::string	HttpRequest::getMethod() {
@@ -114,9 +103,6 @@ std::string	HttpRequest::getMethod() {
 	}
 	else if (_method == POST) {
 		return "POST";
-	}
-	else if (_method == HEAD) {
-		return "HEAD";
 	}
 	else if (_method == PUT) {
 		return "PUT";
@@ -137,19 +123,14 @@ std::string	HttpRequest::getHttpVersion() {
 	return _httpVersion;
 }
 
-/*
-std::string	HttpRequest::getBody() {
-	return _body;
-}
-*/
-
 std::map<std::string, std::string>	HttpRequest::getHeaders() {
 	return _headers;
 }
 
 /*
-** Clean parsing helpers
-** Remove unnecessary spaces and new line characters
+** Clean parsing helpers.
+**
+** `trim()` removes unnecessary spaces and new line characters etc.
 */
 std::string	HttpRequest::trim(const std::string& str) {
 
@@ -175,9 +156,6 @@ enum requestMethod	HttpRequest::isMethod(const std::string& str) {
 	}
 	else if (str == "POST") {
 		return POST;
-	}
-	else if (str == "HEAD") {
-		return HEAD;
 	}
 	else if (str == "PUT") {
 		return PUT;

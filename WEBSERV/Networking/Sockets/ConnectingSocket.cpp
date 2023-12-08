@@ -11,6 +11,8 @@
 ConnectingSocket::ConnectingSocket(int domain, int service, int protocol, int port, u_long interface)
 	: SimpleSocket(domain, service, protocol, port, interface) {
 
+	std::cout << MAGENTA << "\t[ ConnectingSocket ] constructor called." << RESET << std::endl;
+
 	_connectStatus = 0;
 
 	// Establish connection, bind the socket to a port, check for error
@@ -18,6 +20,8 @@ ConnectingSocket::ConnectingSocket(int domain, int service, int protocol, int po
 }
 
 ConnectingSocket::~ConnectingSocket() {
+
+	std::cout << RED << "\t[~] ConnectingSocket destructor called." << RESET << std::endl;
 }
 
 // Getters
