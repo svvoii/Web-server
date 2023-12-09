@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../HeaderSockets.hpp"
+#include "../../Sockets/HeaderSockets.hpp"
 
 class SimpleServer {
 	private:

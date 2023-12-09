@@ -4,8 +4,8 @@ NAME = webserv
 CXX = c++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -g
 
-VPATH = Sockets \
-		Servers
+VPATH = Sockets/src \
+		Servers/src
 
 SRCS = main.cpp \
 	SimpleSocket.cpp \
@@ -14,7 +14,6 @@ SRCS = main.cpp \
 	ConnectingSocket.cpp \
 	SimpleServer.cpp \
 	HttpServer.cpp \
-	TestServer.cpp \
 	HttpRequest.cpp \
 	HttpResponse.cpp \
 

@@ -3,15 +3,15 @@
 
 
 // Parent class (abstract)
-#include "Sockets/SimpleSocket.hpp"
+#include "includes/SimpleSocket.hpp"
 
 // Child class of SimpleSocket for server side socket
-#include "Sockets/BindingSocket.hpp"
+#include "includes/BindingSocket.hpp"
 // Child class of BindingSocket
-#include "Sockets/ListeningSocket.hpp"
+#include "includes/ListeningSocket.hpp"
 
 // Child class of SimpleSocket for client side socket
-#include "Sockets/ConnectingSocket.hpp"
+#include "includes/ConnectingSocket.hpp"
 
 
 #endif

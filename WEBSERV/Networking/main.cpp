@@ -1,6 +1,9 @@
-#include "HeaderSockets.hpp"
-#include "Servers/TestServer.hpp"
-#include "Servers/HttpServer.hpp"
+#include "Sockets/HeaderSockets.hpp"
+#include "Servers/includes/HttpServer.hpp"
+
+#define PROTOCOL 0
+#define PORT 8080
+#define BACKLOG 10
 
 int	main() {
 

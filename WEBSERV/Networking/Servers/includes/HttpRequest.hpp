@@ -18,7 +18,7 @@
 #ifndef HTTPREQUEST_HPP
 #define HTTPREQUEST_HPP
 
-#include "../HeaderSockets.hpp"
+#include "../../Sockets/HeaderSockets.hpp"
 
 #include <sstream>
 #include <string>
@@ -40,25 +40,35 @@ class HttpRequest {
 		enum requestMethod	_method; // To store the type of the request from the browser, GET, POST etc.
 		std::string			_uriPath; // To store the requested path from the browser
 		std::string			_httpVersion;
+		std::string			_bodyBuffer;
 		std::map<std::string, std::string>	_headers;
+		std::map<std::string, std::string>	_body;
 
-		void parseLine(const std::string& line);
-		void parseRequestLine();
+		void parseHeaders(const std::string& line); // To parse the headers of the HTTP request
+		void extractRequestLine(); // To extract the first line of the HTTP request
+		void parseBody(); // To parse the body of the HTTP request
 
 	public:
 
-		HttpRequest(const std::string& request);
+		HttpRequest(const std::string& requestBuffer);
 		~HttpRequest();
 
 		// Getters
 		std::string			getMethod();
 		std::string 		getUri();
 		std::string 		getHttpVersion();
+		std::string			getBodyBuffer();
 		std::map<std::string, std::string> getHeaders();
+		std::map<std::string, std::string> getBody();
 
 		// Clean parsing helpers
 		std::string			trim(const std::string& str);
 		enum requestMethod	isMethod(const std::string& str);
+
+		// Body parsing helpers
+		void				parseFormUrlData(const std::string& data);
+		void				parseJsonData(const std::string& data);
+		void				parseXmlData(const std::string& data);
 
 };
 

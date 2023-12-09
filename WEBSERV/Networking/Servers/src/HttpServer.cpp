@@ -1,4 +1,4 @@
-#include "HttpServer.hpp"
+#include "../includes/HttpServer.hpp"
 
 HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long interface, int backlog) 
 		: SimpleServer(domain, service, protocol, port, interface, backlog) {
@@ -100,6 +100,16 @@ void	HttpServer::_handle() {
 		std::cout << "\tkey[" << it->first << "]:\tvalue[" << it->second << "]" << std::endl;
 	}
 	std::cout << std::endl;
+
+	std::cout << CYAN << "Body:" << RESET << std::endl;
+	std::cout << httpRequest->getBodyBuffer() << std::endl;
+	std::cout << std::endl;
+
+	std::map<std::string, std::string> body = httpRequest->getBody();
+
+	for (std::map<std::string, std::string>::iterator it = body.begin(); it != body.end(); ++it) {
+		std::cout << "\tkey[" << it->first << "]:\tvalue[" << it->second << "]" << std::endl;
+	}
 
 }
 
