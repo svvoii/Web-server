@@ -86,6 +86,7 @@ void	HttpServer::_handle() {
 	// Should be allocated on the heap in this case to use it in `_respond()` method
 	httpRequest = new HttpRequest(_buffRequest);
 
+	/* DEBUG */
 	std::cout << BLUE << "Checking parsed data and Getters of `HttpRequest` class:" << RESET << std::endl;
 	std::cout << std::endl;
 	std::cout << CYAN << "Method:\t" << RESET << httpRequest->getMethod() << std::endl;
@@ -110,6 +111,7 @@ void	HttpServer::_handle() {
 	for (std::map<std::string, std::string>::iterator it = body.begin(); it != body.end(); ++it) {
 		std::cout << "\tkey[" << it->first << "]:\tvalue[" << it->second << "]" << std::endl;
 	}
+	/* ***** */
 
 }
 
@@ -141,6 +143,10 @@ void	HttpServer::_respond() {
 	httpRequest = NULL;
 }
 
+/*
+** This is the main loop of the server.
+** This will allow only one connection at a time.
+*/
 void	HttpServer::run() {
 
 	std::cout << GREEN << "\tHttpServer::run() called." << RESET << std::endl;
@@ -152,3 +158,61 @@ void	HttpServer::run() {
 		_respond();
 	}
 }
+
+/*
+** This is the main loop of the server with the `select()` function.
+**
+** Currently not working properly.. need to fix it.
+**
+void	HttpServer::run() {
+
+	std::cout << GREEN << "\tHttpServer::run() called." << RESET << std::endl;
+
+	fd_set	masterSockets;
+	fd_set	readySockets;
+
+	int		serverSocketFD = getSocket().getSocketFD();
+	int		selectResult;
+	//int		maxSocketFd;
+
+	// Initializing the master set of file descriptors
+	FD_ZERO(&masterSockets);
+
+	// Here we need to add the server socket to the master set (the main socket used in `bind()`
+	FD_SET(serverSocketFD, &masterSockets);
+	//maxSocketFd = _new_socket;
+
+	while (1) {
+
+		readySockets = masterSockets;
+
+		selectResult = select(FD_SETSIZE, &readySockets, NULL, NULL, NULL);
+		if (selectResult < 0) {
+			std::cerr << RED << "\t[-] Error in select().. select() failed." << RESET << std::endl;
+			perror("select error");
+			exit(EXIT_FAILURE);
+		}
+
+		for (int i = 0; i <= FD_SETSIZE; i++) {
+
+			if (FD_ISSET(i, &readySockets)) {
+
+				if (i == _new_socket) {
+					// The main socket is ready to accept a new connection
+					_accept();
+
+					FD_SET(_new_socket, &readySockets);
+				}
+				else {
+					// A client is ready to be handled
+					_handle();
+					_respond();
+
+					close(i);
+					FD_CLR(i, &readySockets);
+				}
+			}
+		}
+	}
+}
+*/

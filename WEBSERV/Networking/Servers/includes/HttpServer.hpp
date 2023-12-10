@@ -19,7 +19,7 @@ class HttpServer : public SimpleServer {
 	private:
 
 		std::string			_buffRequest; // To store the body of the request from the browser/client
-		int					_new_socket; // To store the new socket created by accept()
+		int					_new_socket; // To store the new socket created by accept(), client socket
 
 		void				_accept();
 		void				_handle();
