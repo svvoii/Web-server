@@ -21,8 +21,8 @@
 class ListeningSocket : public BindingSocket {
 	private:
 
-		int	_backlog;
-		int	_listening;
+		int	_backlog; // maximum length of the pending connections queue
+		int	_listening; // return value of `listen()`
 
 	public:
 

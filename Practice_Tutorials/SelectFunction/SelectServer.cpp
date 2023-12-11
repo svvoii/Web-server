@@ -35,25 +35,26 @@ int		check(int exp, const char *msg);
 
 int	main(int argc, char **agrv) {
 
+	// Initializing the server with `socket()` (returns server_fd) and `bind()` to a port
 	int		server_fd = setup_server(SERVER_PORT, SERVER_BACKLOG);
 
 	// we need two fd_set variables since it is modified by select()
 	// current_sockets will always contain the original sockets to monitor
-	fd_set	current_sockets;
+	fd_set	master_sockets;
 	fd_set	ready_sockets;
 
 	int		select_return = 0;
 	// initializing current fd_set
-	FD_ZERO(&current_sockets);
+	FD_ZERO(&master_sockets);
 	// adding server_fd to the current fd_set
-	FD_SET(server_fd, &current_sockets);
+	FD_SET(server_fd, &master_sockets);
 
 	std::cout << "FD_SETSIZE: " << FD_SETSIZE << std::endl;
 
 	while (true) {
 
 		// copy the current fd_set to the ready fd_set
-		ready_sockets = current_sockets;
+		ready_sockets = master_sockets;
 
 
 		select_return = select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL);
@@ -75,7 +76,7 @@ int	main(int argc, char **agrv) {
 					int		client_fd = accept_new_connection(server_fd);
 
 					// add the new connection to the current fd_set
-					FD_SET(client_fd, &current_sockets);
+					FD_SET(client_fd, &master_sockets);
 				}
 				else {
 
@@ -83,7 +84,7 @@ int	main(int argc, char **agrv) {
 					handle_connection(i);
 
 					// remove the current connection from the current fd_set
-					FD_CLR(i, &current_sockets);
+					FD_CLR(i, &master_sockets);
 				}
 			}
 		}

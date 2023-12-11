@@ -3,7 +3,8 @@
 HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long interface, int backlog) 
 		: SimpleServer(domain, service, protocol, port, interface, backlog) {
 
-	std::cout << MAGENTA << "\tHttpServer constructor called." << RESET << std::endl;
+	std::cout << MAGENTA << "\tHttpServer constructor called." << RESET;
+	std::cout << " server_socket_fd: [" << getSocket().getSocketFD() << "]" << std::endl;
 
 	_buffRequest = "";
 	_new_socket = -1;
@@ -42,7 +43,7 @@ void	HttpServer::_accept() {
 	}
 
 	std::cout << GREEN;
-	std::cout << "[+] Connection accepted." << std::endl;
+	std::cout << "[+] Connection accepted. _new_socket_fd:[" << _new_socket << "]" << std::endl;
 	std::cout << "IP: " << inet_ntoa(address.sin_addr) << std::endl;
 	std::cout << BLUE;
 	// !! emepheral port* ??
@@ -51,7 +52,9 @@ void	HttpServer::_accept() {
 	std::cout << RESET;
 
 	char buff[BUF_SIZE] = {0};
+	// Both `recv()` and `read()` some time block the execution of the program..
 	int bytesRead = recv(_new_socket, buff, BUF_SIZE, 0);
+	//int bytesRead = read(_new_socket, buff, BUF_SIZE);
 
 	if (bytesRead < 0) {
 		std::cerr << RED << "\t[-] Error receiving data from the web-browser.. recv() failed." << RESET << std::endl;
@@ -79,7 +82,8 @@ void	HttpServer::_accept() {
 */
 void	HttpServer::_handle() {
 
-	std::cout << MAGENTA << "in `_handle()`.. passing request from web-browser to the `HttpRequest` class." << RESET << std::endl;
+	std::cout << MAGENTA << "in `_handle()`.. passing request from web-browser to the `HttpRequest` class." << RESET;
+	std::cout << " server_socket_fd: [" << getSocket().getSocketFD() << "]" << std::endl;
 	std::cout << std::endl;
 
 	// Passing the request from the web-browser to the `HttpRequest` class for parsing
@@ -87,37 +91,38 @@ void	HttpServer::_handle() {
 	httpRequest = new HttpRequest(_buffRequest);
 
 	/* DEBUG */
-	std::cout << BLUE << "Checking parsed data and Getters of `HttpRequest` class:" << RESET << std::endl;
-	std::cout << std::endl;
+	std::cout << BLUE << "Checking parsed data:" << RESET << std::endl;
+	//std::cout << std::endl;
 	std::cout << CYAN << "Method:\t" << RESET << httpRequest->getMethod() << std::endl;
 	std::cout << CYAN << "URI:   \t" << RESET << httpRequest->getUri() << std::endl;
 	std::cout << CYAN << "HTTP V:\t" << RESET << httpRequest->getHttpVersion() << std::endl;
-
+/*
 	std::cout << std::endl;
-	std::cout << CYAN << "Headers:" << RESET << std::endl;
+	std::cout << CYAN << "Headers MAP:" << RESET << std::endl;
 	std::map<std::string, std::string> headers = httpRequest->getHeaders();
 
 	for (std::map<std::string, std::string>::iterator it = headers.begin(); it != headers.end(); ++it) {
-		std::cout << "\tkey[" << it->first << "]:\tvalue[" << it->second << "]" << std::endl;
+		std::cout << "\tkey: [" << it->first << "]\tvalue: [" << it->second << "]" << std::endl;
 	}
-	std::cout << std::endl;
-
+*/
 	std::cout << CYAN << "Body:" << RESET << std::endl;
 	std::cout << httpRequest->getBodyBuffer() << std::endl;
 	std::cout << std::endl;
-
+/*
+	std::cout << std::endl;
 	std::map<std::string, std::string> body = httpRequest->getBody();
 
 	for (std::map<std::string, std::string>::iterator it = body.begin(); it != body.end(); ++it) {
 		std::cout << "\tkey[" << it->first << "]:\tvalue[" << it->second << "]" << std::endl;
 	}
+*/
 	/* ***** */
 
 }
 
 void	HttpServer::_respond() {
 
-	std::cout << MAGENTA << "in `_respond()`.." << RESET << std::endl;
+	std::cout << MAGENTA << "Generating response.. in `HttpServer::_respond()`.." << RESET << std::endl;
 
 	// Passing the request from the web-browser to the `HttpResponse` class for generating the response
 	HttpResponse	response(httpRequest);
@@ -137,6 +142,7 @@ void	HttpServer::_respond() {
 	std::cout << RESET;
 
 	close(_new_socket);
+	_new_socket = -1;
 
 	// Deleting the `HttpRequest` object right after the response is sent to avoid memory leaks
 	delete httpRequest;
@@ -163,56 +169,4 @@ void	HttpServer::run() {
 ** This is the main loop of the server with the `select()` function.
 **
 ** Currently not working properly.. need to fix it.
-**
-void	HttpServer::run() {
-
-	std::cout << GREEN << "\tHttpServer::run() called." << RESET << std::endl;
-
-	fd_set	masterSockets;
-	fd_set	readySockets;
-
-	int		serverSocketFD = getSocket().getSocketFD();
-	int		selectResult;
-	//int		maxSocketFd;
-
-	// Initializing the master set of file descriptors
-	FD_ZERO(&masterSockets);
-
-	// Here we need to add the server socket to the master set (the main socket used in `bind()`
-	FD_SET(serverSocketFD, &masterSockets);
-	//maxSocketFd = _new_socket;
-
-	while (1) {
-
-		readySockets = masterSockets;
-
-		selectResult = select(FD_SETSIZE, &readySockets, NULL, NULL, NULL);
-		if (selectResult < 0) {
-			std::cerr << RED << "\t[-] Error in select().. select() failed." << RESET << std::endl;
-			perror("select error");
-			exit(EXIT_FAILURE);
-		}
-
-		for (int i = 0; i <= FD_SETSIZE; i++) {
-
-			if (FD_ISSET(i, &readySockets)) {
-
-				if (i == _new_socket) {
-					// The main socket is ready to accept a new connection
-					_accept();
-
-					FD_SET(_new_socket, &readySockets);
-				}
-				else {
-					// A client is ready to be handled
-					_handle();
-					_respond();
-
-					close(i);
-					FD_CLR(i, &readySockets);
-				}
-			}
-		}
-	}
-}
 */

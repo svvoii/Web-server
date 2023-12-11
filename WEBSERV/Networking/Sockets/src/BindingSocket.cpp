@@ -11,7 +11,7 @@
 BindingSocket::BindingSocket(int domain, int service, int protocol, int port, u_long interface)
 	: SimpleSocket(domain, service, protocol, port, interface) {
 
-	std::cout << MAGENTA << "\t[ BindingSocket ] constructor called." << RESET << std::endl;
+	std::cout << MAGENTA << "\t[ BindingSocket ] constructor called. " << RESET << "server_socket_fd: [" << getSocketFD() << "]" << std::endl;
 
 	_bindStatus = 0;
 
@@ -35,7 +35,15 @@ int		BindingSocket::getBindStatus() const {
 */
 void	BindingSocket::connectToNetwork(int socket_fd, struct sockaddr_in address) {
 
-	// Establishing binding connection to the network
+	// `SO_REUSEADDR` will allow to use socket right after the program exits
+	// without waiting for the operating system to clean up the socket
+	int opt = 1;
+	if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+		std::cerr << RED << "\t[-] Error setting socket options.. setsockopt() failed." << RESET << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// here `socket_fd` is the file descriptor of the server side socket
 	_bindStatus = bind(socket_fd, (struct sockaddr *)&address, sizeof(address));
 	// error check
 	this->testConnection(_bindStatus);

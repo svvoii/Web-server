@@ -385,3 +385,32 @@ For more detailed information about NGINX configuration see:
 /*
 **
 */
+
+/*###################################################################################*/
+/* WHAT IS CORS (Cross-Origin Resource Sharing) */
+/*###################################################################################*/
+/*
+** 
+** CORS (Cross-Origin Resource Sharing) headers are used to control how resources 
+** are accessed across origins. When a browser makes a request to a different 
+** origin (domain, protocol, or port), it sends a preflight request with the 
+** `OPTIONS` method to check if the actual request is safe to send.
+** 
+** The main CORS headers to be aware of:
+** 
+** - `Access-Control-Allow-Origin`: This header specifies the origin (or origins)
+** that are allowed to access the resource. A "*" can be used to allow any origin,
+** but for security reasons, it's often better to specify the exact origin.
+** 
+** - `Access-Control-Allow-Methods`: This header specifies the HTTP methods 
+** (GET, POST, PUT, DELETE, etc.) that are allowed.
+** 
+** - `Access-Control-Allow-Headers`: This header specifies the HTTP headers 
+** that can be used when making the actual request.
+** 
+** - `Access-Control-Max-Age`: This header specifies how long the results 
+** of the preflight request can be cached.
+** - `Access-Control-Allow-Credentials`: This header indicates whether or not 
+** the response to the request can be exposed when the credentials flag is true.
+** 
+*/

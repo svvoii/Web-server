@@ -12,6 +12,7 @@ HttpResponse::HttpResponse(HttpRequest *httpRequest)
 	_responseGenerators[POST] = &HttpResponse::_generatePostResponse;
 	_responseGenerators[PUT] = &HttpResponse::_generatePutResponse;
 	_responseGenerators[DELETE] = &HttpResponse::_generateDeleteResponse;
+	_responseGenerators[OPTIONS] = &HttpResponse::_generateOptionsResponse;
 
 	// Fetching the response from the `HttpResponse` object
 	getResponse();
@@ -58,23 +59,6 @@ void	HttpResponse::_generateGetResponse() {
 	}
 }
 
-/* EXAMPLE OF POST REQUEST DONE DIRECTLY FROM THE BROSWER CONSOLE:
-fetch('127.0.0.1:8080', {
-  method: 'POST',
-  Headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    title: 'this is the titel',
-    body: 'this is the body',
-    userId: 1,
-  }),
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch((error) => console.error('Error:', error));
-
-*/
 
 void	HttpResponse::_generatePostResponse() {
 
@@ -83,6 +67,32 @@ void	HttpResponse::_generatePostResponse() {
 
 	// TODO: Implement POST response
 	// 201 Created
+	_response = _httpRequest->getHttpVersion() + " ";
+	std::stringstream ss;
+	/*
+	ss << CREATED;
+	_response += ss.str() + " Created\r\n";
+	_response += "Access-Control-Allow-Origin: *\r\n";
+	_response += "Content-Type: text/html\r\n";
+	_response += "\r\n";
+	_response += "<html><body><h1>201 Created</h1></body></html>\r\n\r\n";
+	*/
+	// 200 OK
+	/*
+	ss << OK;
+	_response += ss.str() + " OK\r\n";
+	_response += "Access-Control-Allow-Origin: *\r\n";
+	_response += "Content-Type: text/plain\r\n";
+	_response += "\r\n";
+	_response += "Hello from POST response! There is no spoon.\r\n\r\n";
+	*/	
+	ss << CREATED;
+	_response += ss.str() + " Created\r\n";
+	_response += "Access-Control-Allow-Origin: *\r\n";
+	_response += "Content-Type: application/json\r\n";
+	_response += "\r\n";
+	_response += "{ \"id\": 1, \"title\": \"this is the title\", \"body\": \"this is the body\", \"userId\": 1 }\r\n\r\n";
+
 }
 
 void	HttpResponse::_generatePutResponse() {
@@ -101,6 +111,23 @@ void	HttpResponse::_generateDeleteResponse() {
 	// TODO: Implement DELETE response
 }
 
+void	HttpResponse::_generateOptionsResponse() {
+
+	std::cout << CYAN << "in _generateOptionsResponse().." << RESET << std::endl;
+	std::cout << std::endl;
+
+	_response = _httpRequest->getHttpVersion() + " ";
+	std::stringstream ss;
+	ss << OK;
+	_response += ss.str() + " OK\r\n";
+	_response += "Access-Control-Allow-Origin: *\r\n";
+	_response += "Access-Control-Allow-Methods: GET, POST, PUT, DELETE\r\n";
+	_response += "Access-Control-Allow-Headers: Content-Type\r\n";
+	_response += "Access-Control-Max-Age: 3600\r\n";
+	_response += "Access-Control-Allow-Credentials: true\r\n";
+	_response += "\r\n";
+
+}
 
 /*
 ** To generate the response, we retrieve the method from the `HttpRequest` 

@@ -1752,7 +1752,7 @@ The `struct protoent` structure contains the protocol name and protocol number.
 31 < < < < < < < < < < < < < < < < < < < FCNTL > > > > > > > > > > > > > > > > > > > >
 
 `fcntl` function in C is used to perform various operations on files or file descriptors.  
-It can be used to gat or set the file attributes, control locks on files, and more.  
+It can be used to get or set the file attributes, control locks on files, and more.  
 
 `int fcntl(int fd, int cmd, ...)`  
 it returns the result of the operation, or -1 if an error occurs.  

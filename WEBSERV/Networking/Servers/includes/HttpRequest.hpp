@@ -31,7 +31,8 @@ enum requestMethod {
 	GET,
 	POST,
 	PUT,
-	DELETE
+	DELETE,
+	OPTIONS
 };
 
 class HttpRequest {
@@ -42,11 +43,9 @@ class HttpRequest {
 		std::string			_httpVersion;
 		std::string			_bodyBuffer;
 		std::map<std::string, std::string>	_headers;
-		std::map<std::string, std::string>	_body;
 
 		void parseHeaders(const std::string& line); // To parse the headers of the HTTP request
 		void extractRequestLine(); // To extract the first line of the HTTP request
-		void parseBody(); // To parse the body of the HTTP request
 
 	public:
 
@@ -59,17 +58,54 @@ class HttpRequest {
 		std::string 		getHttpVersion();
 		std::string			getBodyBuffer();
 		std::map<std::string, std::string> getHeaders();
-		std::map<std::string, std::string> getBody();
 
 		// Clean parsing helpers
 		std::string			trim(const std::string& str);
 		enum requestMethod	isMethod(const std::string& str);
 
-		// Body parsing helpers
-		void				parseFormUrlData(const std::string& data);
-		void				parseJsonData(const std::string& data);
-		void				parseXmlData(const std::string& data);
-
 };
 
 #endif
+
+/* EXAMPLE OF A POST REQUEST FROM THE BROWSER:
+**
+** in the browser console execute the following:
+
+fetch('127.0.0.1:8080', {
+  method: 'POST',
+  Headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    title: 'this is the titel',
+    body: 'this is the body',
+    userId: 1,
+  }),
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch((error) => console.error('Error:', error));
+
+*/
+
+/* ANOTHER EXAMPLE OF A POST REQUEST FROM THE BROWSER.
+** This one will send the OPTIONS request first.. ?!
+**
+
+fetch('http://localhost:8080', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    key1: 'value1',
+    key2: 'value2',
+  }),
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch((error) => {
+  console.error('Error:', error);
+});
+
+*/

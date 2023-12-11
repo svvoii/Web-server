@@ -60,6 +60,7 @@ class HttpResponse {
 		void			_generatePostResponse();
 		void			_generatePutResponse();
 		void			_generateDeleteResponse();
+		void			_generateOptionsResponse();
 
 		// Helpers
 		std::string		_getFileContent(const std::string& filePath);

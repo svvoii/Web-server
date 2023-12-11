@@ -17,6 +17,8 @@ SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port, u_lo
 	// error checking
 	testConnection(this->_socket_fd);
 
+	std::cout << GREEN << "\t[+] Socket created successfully. _socket_fd = " << this->_socket_fd << RESET << std::endl; 
+
 }
 
 /*
@@ -45,11 +47,11 @@ struct sockaddr_in	SimpleSocket::getAddress() const {
 
 /*
 ** Setters
-*/
 void	SimpleSocket::setSocketFD(int socket_fd) {
 
 	this->_socket_fd = socket_fd;
 }
+*/
 
 /*
 ** This method is used to test the established connection

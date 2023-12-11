@@ -9,7 +9,7 @@ SimpleServer::SimpleServer(int domain, int service, int protocol,
 					interface, 
 					backlog) {
 
-	std::cout << MAGENTA << "\tSimpleServer constructor called." << RESET << std::endl;
+	std::cout << MAGENTA << "\tSimpleServer constructor called." << RESET << " server_socket_fd: [" << _socket.getSocketFD() << "]" << std::endl;
 
 	//_socket = new ListeningSocket(domain, service, protocol, port, interface, backlog);
 }

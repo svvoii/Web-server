@@ -38,7 +38,7 @@
 class SimpleSocket {
 	private:
 
-		int					_socket_fd;
+		int					_socket_fd; // this will be the file descriptor returned by `socket()`
 		struct sockaddr_in	_address;
 	
 	public:
@@ -51,7 +51,7 @@ class SimpleSocket {
 		struct sockaddr_in	getAddress() const;
 
 		// Setters
-		void				setSocketFD(int socket_fd);
+		// void				setSocketFD(int socket_fd);
 
 		// This must be implemented by the child class. 
 		// In the implementation either `bind()` or `connect()` to be used (SERVER vs CLIENT)

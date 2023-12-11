@@ -9,7 +9,7 @@ ListeningSocket::ListeningSocket(
 	int backlog)
 	: BindingSocket(domain, service, protocol, port, interface) {
 
-	std::cout << MAGENTA << "\t[ ListeningSocket ] constructor called." << RESET << std::endl;
+	std::cout << MAGENTA << "\t[ ListeningSocket ] constructor called. " << RESET << "server_socket_fd: [" << getSocketFD() << "]" << std::endl;
 
 	this->_backlog = backlog;
 	this->_listening = 0;
@@ -35,6 +35,7 @@ int		ListeningSocket::getListening() const {
 
 void	ListeningSocket::startListenToNetwork() {
 
+	// getSocketFD() here is the file descriptor of the server side socket
 	_listening = listen(getSocketFD(), _backlog);
 
 	testConnection(_listening);
