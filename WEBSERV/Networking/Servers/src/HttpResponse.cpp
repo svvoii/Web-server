@@ -25,8 +25,8 @@ HttpResponse::~HttpResponse() {
 
 void	HttpResponse::_generateGetResponse() {
 
-	std::cout << CYAN << "in _generateGetResponse().." << RESET << std::endl;
-	std::cout << std::endl;
+	std::cout << CYAN << "in _generateGetResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
+	//std::cout << std::endl;
 
 	std::string filePath;
 	if (_httpRequest->getUri() == "/") {
@@ -41,29 +41,31 @@ void	HttpResponse::_generateGetResponse() {
 
 	std::string body = _getFileContent(filePath);
 
-	if (body.length() != 0) {
-		// Generating a 200 OK response with the file content
-		_response = _httpRequest->getHttpVersion() + " ";
-		std::stringstream ss;
-		ss << OK;
-		_response += ss.str() + " OK\r\n";
-		
-		if (filePath == FAVICON_FILE_PATH) {
-			_response += "Content-Type: image/x-icon\r\n";
-		}
-		else {
-			_response += "Content-Type: text/html\r\n";
-		}
-		_response += "\r\n";
-		_response += body + "\r\n\r\n";
+	// Generating a 200 OK response with the file content
+	_response = _httpRequest->getHttpVersion() + " ";
+	std::stringstream ss;
+	ss << OK;
+	_response += ss.str() + " OK\r\n";
+	
+	if (filePath == FAVICON_FILE_PATH) {
+		_response += "Content-Type: image/x-icon\r\n";
 	}
-}
+	else {
+		_response += "Content-Type: text/html\r\n";
+	}
 
+	std::stringstream bodyLength;
+	bodyLength << body.length();
+	_response += "Content-Length: " + bodyLength.str() + "\r\n";
+	_response += "Connection: close\r\n";
+	_response += "\r\n";
+	_response += body + "\r\n\r\n";
+}
 
 void	HttpResponse::_generatePostResponse() {
 
 	std::cout << CYAN << "in _generatePostResponse().." << RESET << std::endl;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	// TODO: Implement POST response
 	// 201 Created
@@ -98,7 +100,7 @@ void	HttpResponse::_generatePostResponse() {
 void	HttpResponse::_generatePutResponse() {
 
 	std::cout << CYAN << "in _generatePutResponse().." << RESET << std::endl;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	// TODO: Implement PUT response
 }
@@ -106,7 +108,7 @@ void	HttpResponse::_generatePutResponse() {
 void	HttpResponse::_generateDeleteResponse() {
 
 	std::cout << CYAN << "in _generateDeleteResponse().." << RESET << std::endl;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	// TODO: Implement DELETE response
 }
@@ -114,7 +116,7 @@ void	HttpResponse::_generateDeleteResponse() {
 void	HttpResponse::_generateOptionsResponse() {
 
 	std::cout << CYAN << "in _generateOptionsResponse().." << RESET << std::endl;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	_response = _httpRequest->getHttpVersion() + " ";
 	std::stringstream ss;
@@ -150,7 +152,7 @@ std::string		HttpResponse::getResponse() {
 std::string		HttpResponse::_getFileContent(const std::string& filePath) {
 
 	std::cout << CYAN << "in _getFileContent().." << RESET << std::endl;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	std::ifstream	file(filePath.c_str());
 	
@@ -170,7 +172,7 @@ std::string		HttpResponse::_getFileContent(const std::string& filePath) {
 void	HttpResponse::_notFound() {
 
 	std::cout << CYAN << "in _notFound().." << RESET << std::endl;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	_response = _httpRequest->getHttpVersion() + " ";
 	_response += "404 Not Found\r\n";

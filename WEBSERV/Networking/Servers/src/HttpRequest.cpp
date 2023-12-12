@@ -1,5 +1,6 @@
 #include "../includes/HttpRequest.hpp"
 
+/*
 HttpRequest::HttpRequest(const std::string& buffer) {
 
 	std::cout << MAGENTA;
@@ -35,13 +36,72 @@ HttpRequest::HttpRequest(const std::string& buffer) {
 	}
 
 }
+*/
+
+HttpRequest::HttpRequest(int socketFd) 
+	: _buffRequest(""), _method(NONE), _uriPath(""), _httpVersion(""), _bodyBuffer("") {
+
+	std::cout << MAGENTA << "\tHttpRequest constructor called." << RESET << std::endl;
+	std::cout << CYAN << "Reading request from the browser.." << RESET << std::endl;
+
+	memset(_buff, 0, BUF_SIZE);
+
+	// Reading the request from the browser/client
+	// int bytes_read = read(socketFd, _buff, BUF_SIZE);
+	int bytes_read = recv(socketFd, _buff, BUF_SIZE, 0);
+	if (bytes_read < 0) {
+		std::cerr << RED << "\t[-] Error receiving data from the web-browser.. recv() failed." << RESET << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	else if (bytes_read == 0) {
+		std::cout << RED << "\t[-] Connection closed by the web-browser." << RESET << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	else {
+		std::cout << GREEN << "\tData received from the web-browser and added to the `_buffer`, bytesRead: [" << bytes_read << "]." << RESET << std::endl;
+		_buffRequest.assign(_buff, bytes_read);
+	}	
+
+	std::cout << BLUE << "Buffer contents:" << RESET << std::endl;
+	std::cout << _buffRequest << std::endl;
+	std::cout << std::endl;
+	std::cout << BLUE << "Buffer contents in HEX:" << RESET << std::endl;
+	_printInHEX(_buff, bytes_read);
+
+	_parsing();
+
+}
 
 HttpRequest::~HttpRequest() {
 	
 	std::cout << RED << "\t[~] HttpRequest destructor called." << RESET << std::endl;
 }
 
-void	HttpRequest::parseHeaders(const std::string& line) {
+void	HttpRequest::_parsing() {
+	std::cout << MAGENTA << "Parsing HTTP request ..." << RESET << std::endl;
+
+	std::istringstream	ss(_buffRequest);
+	std::string			line;
+
+	while (std::getline(ss, line) && !line.empty() && line != "\r") {
+
+		line = trim(line);
+
+		_parseHeaders(line);
+	}
+	std::cout << std::endl;
+
+	// Extracting the request line, METHOD, URI/PATH, HTTP version
+	_extractRequestLine();
+
+	// Extracting the body of the request
+	while (std::getline(ss, line)) {
+		_bodyBuffer += line;
+	}
+
+}
+
+void	HttpRequest::_parseHeaders(const std::string& line) {
 
 	//std::cout << CYAN << "in parseLine().." << RESET << std::endl;
 
@@ -55,9 +115,6 @@ void	HttpRequest::parseHeaders(const std::string& line) {
 	key = trim(key);
 	value = trim(value);
 
-	//std::cout << "\tkey:  [" << key << "]" << std::endl;
-	//std::cout << "\tvalue:[" << value << "]" << std::endl;
-
 	if (key.length() != 0 || value.length() != 0) {
 		_headers.insert(std::make_pair(key, value));
 	}
@@ -68,12 +125,7 @@ void	HttpRequest::parseHeaders(const std::string& line) {
 ** using typedef on the map iterator to make it easier to read
 */
 typedef std::map<std::string, std::string>::iterator MapIterator;
-void	HttpRequest::extractRequestLine() {
-
-	/* DEBUG 
-	std::cout << CYAN << "in prseRequestLine().." << RESET << std::endl;
-	std::cout << std::endl;
-	*/
+void	HttpRequest::_extractRequestLine() {
 
 	for (MapIterator it = _headers.begin(); it != _headers.end(); it++) {
 
@@ -181,4 +233,14 @@ enum requestMethod	HttpRequest::isMethod(const std::string& str) {
 	else {
 		return NONE;
 	}
+}
+
+void	HttpRequest::_printInHEX(char *buff, int len) {
+
+	std::cout << "[";
+	for (int i = 0; i < len; i++) {
+		//std::cout << std::hex << (int)buff[i] << " ";
+		std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)buff[i] << " ";
+	}
+	std::cout << "]" << std::endl;
 }

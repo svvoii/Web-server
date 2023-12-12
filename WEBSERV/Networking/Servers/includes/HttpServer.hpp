@@ -6,10 +6,8 @@
 #include "HttpResponse.hpp"
 
 #include <arpa/inet.h> // inet_ntoa
-#include <sstream> // std::stringstream
 #include <map> // std::map
 
-#define BUF_SIZE 102400 // 100 KB to store the request from the browser
 
 //class HttpRequest;
 
@@ -18,18 +16,19 @@
 class HttpServer : public SimpleServer {
 	private:
 
-		std::string			_buffRequest; // To store the body of the request from the browser/client
-		int					_new_socket; // To store the new socket FD created by accept(), client socket
+		//std::string			_buffRequest; // To store the body of the request from the browser/client
+		int					_newSocketFd; // To store the new socket FD created by accept(), client socket
 
 		void				_accept();
-		void				_handle();
-		void				_respond();
+		void				_handleRequestAndResponse();
+		//void				_handle();
+		//void				_respond();
 
 	public:
 
 		// Pointer to a Class to parse the request from the browser
 		// `HttpRequest` object instantiated on the heap in the `_handle()` method
-		HttpRequest			*httpRequest;
+		//HttpRequest			*httpRequest;
 
 		HttpServer(int domain, 
 				int service, 

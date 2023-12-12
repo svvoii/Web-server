@@ -20,9 +20,13 @@
 
 #include "../../Sockets/HeaderSockets.hpp"
 
-#include <sstream>
+#include <sstream> // std::stringstream
 #include <string>
 #include <map>
+#include <string.h>
+#include <iomanip> // std::setw and std::setfill
+
+#define BUF_SIZE 10240 // 100 KB to store the request from the browser
 
 class HttpServer;
 
@@ -38,18 +42,24 @@ enum requestMethod {
 class HttpRequest {
 	private:
 
+		char				_buff[BUF_SIZE]; // To store the request from the browser
+		std::string			_buffRequest; // To store the request from the browser
 		enum requestMethod	_method; // To store the type of the request from the browser, GET, POST etc.
 		std::string			_uriPath; // To store the requested path from the browser
 		std::string			_httpVersion;
 		std::string			_bodyBuffer;
 		std::map<std::string, std::string>	_headers;
 
-		void parseHeaders(const std::string& line); // To parse the headers of the HTTP request
-		void extractRequestLine(); // To extract the first line of the HTTP request
+		void _parsing(); // To parse the request from the browser line by line
+		// parsing helpers	
+		void _parseHeaders(const std::string& line); // To parse the headers of the HTTP request
+		void _extractRequestLine(); // To extract the first line of the HTTP request
+		void _printInHEX(char *buff, int len); // To print the request in HEX
 
 	public:
 
-		HttpRequest(const std::string& requestBuffer);
+		HttpRequest(const int socketFd); // `socketFd` is the socket fd to read the request from
+		//HttpRequest(const std::string& requestBuffer);
 		~HttpRequest();
 
 		// Getters
