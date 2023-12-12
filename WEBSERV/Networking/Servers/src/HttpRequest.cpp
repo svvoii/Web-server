@@ -64,9 +64,9 @@ HttpRequest::HttpRequest(int socketFd)
 
 	std::cout << BLUE << "Buffer contents:" << RESET << std::endl;
 	std::cout << _buffRequest << std::endl;
-	std::cout << std::endl;
-	std::cout << BLUE << "Buffer contents in HEX:" << RESET << std::endl;
-	_printInHEX(_buff, bytes_read);
+	//std::cout << std::endl;
+	//std::cout << BLUE << "Buffer contents in HEX:" << RESET << std::endl;
+	//_printInHEX(_buff, bytes_read);
 
 	_parsing();
 

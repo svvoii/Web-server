@@ -7,7 +7,7 @@
 
 #include <arpa/inet.h> // inet_ntoa
 #include <map> // std::map
-
+#include <ctime> // std::time_t
 
 //class HttpRequest;
 
@@ -39,6 +39,7 @@ class HttpServer : public SimpleServer {
 		~HttpServer();
 
 		void		run();
+		std::string	timeStamp();
 };
 
 #endif

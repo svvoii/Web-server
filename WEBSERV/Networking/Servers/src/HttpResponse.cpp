@@ -14,8 +14,6 @@ HttpResponse::HttpResponse(HttpRequest *httpRequest)
 	_responseGenerators[DELETE] = &HttpResponse::_generateDeleteResponse;
 	_responseGenerators[OPTIONS] = &HttpResponse::_generateOptionsResponse;
 
-	// Fetching the response from the `HttpResponse` object
-	getResponse();
 }
 
 HttpResponse::~HttpResponse() {
@@ -26,46 +24,27 @@ HttpResponse::~HttpResponse() {
 void	HttpResponse::_generateGetResponse() {
 
 	std::cout << CYAN << "in _generateGetResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
-	//std::cout << std::endl;
+	std::ostringstream oss;
 
-	std::string filePath;
 	if (_httpRequest->getUri() == "/") {
-		filePath = INDEX_FILE_PATH;
+		_GetDefaultPath(oss);
 	}
+	/*
 	else if (_httpRequest->getUri() == "/favicon.ico") {
-		filePath = FAVICON_FILE_PATH;	
+		_GetFavicon(oss);
 	}
+	*/
 	else {
-		filePath = _httpRequest->getUri();
+		_notFound(oss);
 	}
 
-	std::string body = _getFileContent(filePath);
+	_response = oss.str();
 
-	// Generating a 200 OK response with the file content
-	_response = _httpRequest->getHttpVersion() + " ";
-	std::stringstream ss;
-	ss << OK;
-	_response += ss.str() + " OK\r\n";
-	
-	if (filePath == FAVICON_FILE_PATH) {
-		_response += "Content-Type: image/x-icon\r\n";
-	}
-	else {
-		_response += "Content-Type: text/html\r\n";
-	}
-
-	std::stringstream bodyLength;
-	bodyLength << body.length();
-	_response += "Content-Length: " + bodyLength.str() + "\r\n";
-	_response += "Connection: close\r\n";
-	_response += "\r\n";
-	_response += body + "\r\n\r\n";
 }
 
 void	HttpResponse::_generatePostResponse() {
 
-	std::cout << CYAN << "in _generatePostResponse().." << RESET << std::endl;
-	//std::cout << std::endl;
+	std::cout << CYAN << "in _generatePostResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
 
 	// TODO: Implement POST response
 	// 201 Created
@@ -99,16 +78,14 @@ void	HttpResponse::_generatePostResponse() {
 
 void	HttpResponse::_generatePutResponse() {
 
-	std::cout << CYAN << "in _generatePutResponse().." << RESET << std::endl;
-	//std::cout << std::endl;
+	std::cout << CYAN << "in _generatePutResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
 
 	// TODO: Implement PUT response
 }
 
 void	HttpResponse::_generateDeleteResponse() {
 
-	std::cout << CYAN << "in _generateDeleteResponse().." << RESET << std::endl;
-	//std::cout << std::endl;
+	std::cout << CYAN << "in _generateDeleteResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
 
 	// TODO: Implement DELETE response
 }
@@ -116,7 +93,6 @@ void	HttpResponse::_generateDeleteResponse() {
 void	HttpResponse::_generateOptionsResponse() {
 
 	std::cout << CYAN << "in _generateOptionsResponse().." << RESET << std::endl;
-	//std::cout << std::endl;
 
 	_response = _httpRequest->getHttpVersion() + " ";
 	std::stringstream ss;
@@ -151,17 +127,10 @@ std::string		HttpResponse::getResponse() {
 
 std::string		HttpResponse::_getFileContent(const std::string& filePath) {
 
-	std::cout << CYAN << "in _getFileContent().." << RESET << std::endl;
-	//std::cout << std::endl;
-
 	std::ifstream	file(filePath.c_str());
 	
-	if (!file) {
-		// File not found, send 404
-		_notFound();
-	}
-	else {
-		// File found, reading the content into the response string
+	if (file.is_open()) {
+
 		std::string body((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
 		return body;
@@ -169,14 +138,49 @@ std::string		HttpResponse::_getFileContent(const std::string& filePath) {
 	return "";
 }
 
-void	HttpResponse::_notFound() {
+void	HttpResponse::_GetDefaultPath(std::ostringstream& responseStream) {
 
-	std::cout << CYAN << "in _notFound().." << RESET << std::endl;
-	//std::cout << std::endl;
+	std::string body = _getFileContent(INDEX_FILE_PATH);
 
-	_response = _httpRequest->getHttpVersion() + " ";
-	_response += "404 Not Found\r\n";
-	_response += "Content-Type: text/html\r\n";
-	_response += "\r\n";
-	_response += "<html><body><h1>404 Not Found</h1></body></html>\r\n\r\n";
+	if (!body.empty()) {
+		responseStream << _httpRequest->getHttpVersion() << " " << OK << " OK\r\n";
+		responseStream << "Connection: close\r\n";
+		responseStream << "Content-Length: " << body.length() << "\r\n";
+		responseStream << "Content-Type: text/html\r\n";
+		responseStream << "\r\n";
+		responseStream << body << "\r\n\r\n";
+	}
+	else {
+		_notFound(responseStream);
+	}
+}
+
+void	HttpResponse::_GetFavicon(std::ostringstream& responseStream) {
+
+	std::string body = _getFileContent(FAVICON_FILE_PATH);
+
+	if (body.empty()) {
+		responseStream << _httpRequest->getHttpVersion() << " " << OK << " OK\r\n";
+		responseStream << "Connection: close\r\n";
+		responseStream << "Content-Length: " << body.length() << "\r\n";
+		responseStream << "Content-Type: image/x-icon\r\n";
+		responseStream << "\r\n";
+		responseStream << body << "\r\n\r\n";
+	}
+	else {
+		_notFound(responseStream);
+	}
+}
+
+void	HttpResponse::_notFound(std::ostringstream& responseStream) {
+
+	std::string const body = "<html><body><h1>404 Not Found</h1></body></html>\r\n\r\n";
+
+	responseStream << _httpRequest->getHttpVersion() << " ";
+	responseStream << "404 Not Found\r\n";
+	responseStream << "Connection: close\r\n";
+	responseStream << "Content-Length: " << body.length() << "\r\n";
+	responseStream << "Content-Type: text/html\r\n";
+	responseStream << "\r\n";
+	responseStream << body << "\r\n\r\n";
 }

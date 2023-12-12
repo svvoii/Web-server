@@ -63,8 +63,10 @@ class HttpResponse {
 		void			_generateOptionsResponse();
 
 		// Helpers
+		void			_GetDefaultPath(std::ostringstream& responseStream);
+		void			_GetFavicon(std::ostringstream& responseStream);
+		void			_notFound(std::ostringstream& responseStream);
 		std::string		_getFileContent(const std::string& filePath);
-		void			_notFound();
 
 	public:
 

@@ -3,11 +3,10 @@
 HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long interface, int backlog) 
 		: SimpleServer(domain, service, protocol, port, interface, backlog) {
 
-	std::cout << MAGENTA << "\tHttpServer constructor called." << RESET;
+	std::cout << "[" << timeStamp() << "] " << MAGENTA << "\tHttpServer constructor called." << RESET;
 	std::cout << " server_socket_fd: [" << getSocket().getSocketFD() << "]" << std::endl;
 
 	_newSocketFd = -1;
-	//httpRequest = NULL;
 
 	// Launching the server.. `_accept()` >>> `_handle()` >>> `_respond()`
 	run();
@@ -16,20 +15,11 @@ HttpServer::HttpServer(int domain, int service, int protocol, int port, u_long i
 HttpServer::~HttpServer() {
 	
 	std::cout << RED << "\t[~] HttpServer destructor called." << RESET << std::endl;
-
-	/*
-	// Deleting the `HttpRequest` object on proper server shutdown
-	if (httpRequest != NULL) {
-		delete httpRequest;
-		httpRequest = NULL;
-	}
-	*/
 }
 
 void	HttpServer::_accept() {
 
-	std::cout << std::endl;
-	std::cout << MAGENTA << "in `_accept()`.." << RESET << std::endl;
+	std::cout << "[" << timeStamp() << "] " << MAGENTA << "in `_accept()`.." << RESET << std::endl;
 	
 	struct sockaddr_in	address = getSocket().getAddress();
 	int					addrlen = sizeof(address);
@@ -56,7 +46,7 @@ void	HttpServer::_accept() {
 */
 void	HttpServer::_handleRequestAndResponse() {
 
-	std::cout << MAGENTA << "in `_handle()`.. passing request from web-browser to the `HttpRequest` class." << RESET;
+	std::cout << "[" << timeStamp() << "] " << MAGENTA << "in `_handle()`.. passing request from web-browser to the `HttpRequest` class." << RESET;
 	std::cout << " server_socket_fd: [" << getSocket().getSocketFD() << "]" << std::endl;
 	std::cout << std::endl;
 
@@ -64,13 +54,11 @@ void	HttpServer::_handleRequestAndResponse() {
 	HttpRequest httpRequest(_newSocketFd);
 
 	std::cout << BLUE << "Checking parsed data:" << RESET << std::endl;
-	//std::cout << std::endl;
 	std::cout << CYAN << "Method:\t" << RESET << httpRequest.getMethod() << std::endl;
 	std::cout << CYAN << "URI:   \t" << RESET << httpRequest.getUri() << std::endl;
 	std::cout << CYAN << "HTTP V:\t" << RESET << httpRequest.getHttpVersion() << std::endl;
 	std::cout << CYAN << "Body:" << RESET << std::endl;
 	std::cout << httpRequest.getBodyBuffer() << std::endl;
-	std::cout << std::endl;
 
 	std::cout << MAGENTA << "Generating response.." << RESET << std::endl;
 
@@ -112,3 +100,11 @@ void	HttpServer::run() {
 **
 ** Currently not working properly.. need to fix it.
 */
+
+std::string	HttpServer::timeStamp() {
+	std::time_t currentTime = time(NULL);
+	std::string dt = std::ctime(&currentTime);
+	dt.erase(dt.length() - 6);
+
+	return dt;
+}
