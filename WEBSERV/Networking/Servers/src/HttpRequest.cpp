@@ -1,6 +1,7 @@
 #include "../includes/HttpRequest.hpp"
 
 /*
+*/
 HttpRequest::HttpRequest(const std::string& buffer) {
 
 	std::cout << MAGENTA;
@@ -23,20 +24,18 @@ HttpRequest::HttpRequest(const std::string& buffer) {
 		//std::cout << "trimmed line: [" << line << "]" << std::endl;
 		//std::flush(std::cout);
 
-		parseHeaders(line);
+		_parseHeaders(line);
 	}
 	std::cout << std::endl;
 
 	// Extracting the request line, method, uri, http version
-	extractRequestLine();
+	_extractRequestLine();
 
 	// Extracting the body of the request
 	while (std::getline(ss, line)) {
 		_bodyBuffer += line;
 	}
-
 }
-*/
 
 HttpRequest::HttpRequest(int socketFd) 
 	: _buffRequest(""), _method(NONE), _uriPath(""), _httpVersion(""), _bodyBuffer("") {

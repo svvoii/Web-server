@@ -13,9 +13,11 @@ class SimpleServer {
 
 		// Must be implemented by the child class.
 		virtual void		_accept() = 0;
+		virtual void		_handle(int fd) = 0;
+		virtual void		_respond(int fd) = 0;
+
+		// alternative to handle() and respond()
 		virtual void		_handleRequestAndResponse() = 0;
-		//virtual void		_handle() = 0;
-		//virtual void		_respond() = 0;
 
 	public:
 

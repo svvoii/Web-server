@@ -6,6 +6,7 @@
 #include "HttpResponse.hpp"
 
 #include <arpa/inet.h> // inet_ntoa
+#include <fcntl.h> // fcntl
 #include <map> // std::map
 #include <ctime> // std::time_t
 
@@ -16,13 +17,27 @@
 class HttpServer : public SimpleServer {
 	private:
 
-		//std::string			_buffRequest; // To store the body of the request from the browser/client
+		std::string			_requestBuffer; // To store the request from the browser
+		std::string			_responseBuffer; // To store the response to the browser
+
+		int					_serverSocketFd; // Server socket FD
 		int					_newSocketFd; // To store the new socket FD created by accept(), client socket
 
+		fd_set				_recv_fd_pool; // To store the socket FDs of the clients
+		fd_set				_send_fd_pool; // To store the socket FDs of the clients
+		int					_max_fd; // To store the max socket FD
+
+		void				_initFdSets();
+		void				_addToSet(int fd, fd_set *set);
+		void				_removeFromSet(int fd, fd_set *set);
+		void				_closeConnection(int fd);
+
 		void				_accept();
+		void				_handle(int fd);
+		void				_respond(int fd);
+
+		// alternative to handle() and respond()
 		void				_handleRequestAndResponse();
-		//void				_handle();
-		//void				_respond();
 
 	public:
 
@@ -40,6 +55,7 @@ class HttpServer : public SimpleServer {
 
 		void		run();
 		std::string	timeStamp();
+		void		checkErrorAndExit(int returnValue, const std::string& msg);
 };
 
 #endif

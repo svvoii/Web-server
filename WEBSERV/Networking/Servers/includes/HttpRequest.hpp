@@ -59,7 +59,7 @@ class HttpRequest {
 	public:
 
 		HttpRequest(const int socketFd); // `socketFd` is the socket fd to read the request from
-		//HttpRequest(const std::string& requestBuffer);
+		HttpRequest(const std::string& requestBuffer);
 		~HttpRequest();
 
 		// Getters
