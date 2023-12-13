@@ -21,7 +21,7 @@ class HttpServer : public SimpleServer {
 		std::string			_responseBuffer; // To store the response to the browser
 
 		int					_serverSocketFd; // Server socket FD
-		int					_newSocketFd; // To store the new socket FD created by accept(), client socket
+		//int					_newSocketFd; // To store the new socket FD created by accept(), client socket
 
 		fd_set				_recv_fd_pool; // To store the socket FDs of the clients
 		fd_set				_send_fd_pool; // To store the socket FDs of the clients
@@ -32,12 +32,9 @@ class HttpServer : public SimpleServer {
 		void				_removeFromSet(int fd, fd_set *set);
 		void				_closeConnection(int fd);
 
-		void				_accept();
+		void				_accept(int fd);
 		void				_handle(int fd);
 		void				_respond(int fd);
-
-		// alternative to handle() and respond()
-		void				_handleRequestAndResponse();
 
 	public:
 

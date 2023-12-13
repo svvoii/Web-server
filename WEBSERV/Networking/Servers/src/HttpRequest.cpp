@@ -4,29 +4,19 @@
 */
 HttpRequest::HttpRequest(const std::string& buffer) {
 
-	std::cout << MAGENTA;
-	std::cout << "\tHttpRequest constructor called." << std::endl;
-	std::cout << "Here is the request from the browser:";
-	std::cout << RESET << std::endl;
-	std::cout << buffer << std::endl;
+	std::cout << MAGENTA << "\tHttpRequest constructor called." << RESET << std::endl;
+	std::cout << CYAN << "Parsing HTTP request.." << RESET << std::endl;
 
 	std::istringstream	ss(buffer);
 	std::string			line;
 
-	std::cout << MAGENTA << "Parsing HTTP request ..." << RESET << std::endl;
-	//std::cout << std::endl;
-
 	// Parsing each line into map by the first space
-	//std::cout << CYAN << "..parseLine().." << RESET << std::endl;
 	while (std::getline(ss, line) && !line.empty() && line != "\r") {
 
 		line = trim(line);
-		//std::cout << "trimmed line: [" << line << "]" << std::endl;
-		//std::flush(std::cout);
 
 		_parseHeaders(line);
 	}
-	std::cout << std::endl;
 
 	// Extracting the request line, method, uri, http version
 	_extractRequestLine();
@@ -37,67 +27,9 @@ HttpRequest::HttpRequest(const std::string& buffer) {
 	}
 }
 
-HttpRequest::HttpRequest(int socketFd) 
-	: _buffRequest(""), _method(NONE), _uriPath(""), _httpVersion(""), _bodyBuffer("") {
-
-	std::cout << MAGENTA << "\tHttpRequest constructor called." << RESET << std::endl;
-	std::cout << CYAN << "Reading request from the browser.." << RESET << std::endl;
-
-	memset(_buff, 0, BUF_SIZE);
-
-	// Reading the request from the browser/client
-	// int bytes_read = read(socketFd, _buff, BUF_SIZE);
-	int bytes_read = recv(socketFd, _buff, BUF_SIZE, 0);
-	if (bytes_read < 0) {
-		std::cerr << RED << "\t[-] Error receiving data from the web-browser.. recv() failed." << RESET << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	else if (bytes_read == 0) {
-		std::cout << RED << "\t[-] Connection closed by the web-browser." << RESET << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	else {
-		std::cout << GREEN << "\tData received from the web-browser and added to the `_buffer`, bytesRead: [" << bytes_read << "]." << RESET << std::endl;
-		_buffRequest.assign(_buff, bytes_read);
-	}	
-
-	std::cout << BLUE << "Buffer contents:" << RESET << std::endl;
-	std::cout << _buffRequest << std::endl;
-	//std::cout << std::endl;
-	//std::cout << BLUE << "Buffer contents in HEX:" << RESET << std::endl;
-	//_printInHEX(_buff, bytes_read);
-
-	_parsing();
-
-}
-
 HttpRequest::~HttpRequest() {
 	
 	std::cout << RED << "\t[~] HttpRequest destructor called." << RESET << std::endl;
-}
-
-void	HttpRequest::_parsing() {
-	std::cout << MAGENTA << "Parsing HTTP request ..." << RESET << std::endl;
-
-	std::istringstream	ss(_buffRequest);
-	std::string			line;
-
-	while (std::getline(ss, line) && !line.empty() && line != "\r") {
-
-		line = trim(line);
-
-		_parseHeaders(line);
-	}
-	std::cout << std::endl;
-
-	// Extracting the request line, METHOD, URI/PATH, HTTP version
-	_extractRequestLine();
-
-	// Extracting the body of the request
-	while (std::getline(ss, line)) {
-		_bodyBuffer += line;
-	}
-
 }
 
 void	HttpRequest::_parseHeaders(const std::string& line) {

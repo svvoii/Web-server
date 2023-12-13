@@ -116,7 +116,7 @@ std::string		HttpResponse::getResponse() {
 
 	enum requestMethod	method = _httpRequest->isMethod(_httpRequest->getMethod());
 
-	std::cout << CYAN << "in getResponse().. method:[" << method << "]" << RESET << std::endl;
+	std::cout << CYAN << "in getResponse().. method:[" << _httpRequest->getMethod() << "]" << RESET << std::endl;
 
 	if (method != NONE) {
 		(this->*_responseGenerators[method])();

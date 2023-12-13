@@ -42,15 +42,12 @@ enum requestMethod {
 class HttpRequest {
 	private:
 
-		char				_buff[BUF_SIZE]; // To store the request from the browser
-		std::string			_buffRequest; // To store the request from the browser
 		enum requestMethod	_method; // To store the type of the request from the browser, GET, POST etc.
 		std::string			_uriPath; // To store the requested path from the browser
 		std::string			_httpVersion;
 		std::string			_bodyBuffer;
 		std::map<std::string, std::string>	_headers;
 
-		void _parsing(); // To parse the request from the browser line by line
 		// parsing helpers	
 		void _parseHeaders(const std::string& line); // To parse the headers of the HTTP request
 		void _extractRequestLine(); // To extract the first line of the HTTP request
@@ -58,8 +55,7 @@ class HttpRequest {
 
 	public:
 
-		HttpRequest(const int socketFd); // `socketFd` is the socket fd to read the request from
-		HttpRequest(const std::string& requestBuffer);
+		HttpRequest(const std::string& requestBuffer); // Constructor reseives the request buffer from HttpServer::_handle() method
 		~HttpRequest();
 
 		// Getters
