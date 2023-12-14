@@ -3,10 +3,10 @@
 /*
 */
 HttpRequest::HttpRequest(const std::string& buffer) {
-
+/*
 	std::cout << MAGENTA << "\tHttpRequest constructor called." << RESET << std::endl;
 	std::cout << CYAN << "Parsing HTTP request.." << RESET << std::endl;
-
+*/
 	std::istringstream	ss(buffer);
 	std::string			line;
 
@@ -29,7 +29,7 @@ HttpRequest::HttpRequest(const std::string& buffer) {
 
 HttpRequest::~HttpRequest() {
 	
-	std::cout << RED << "\t[~] HttpRequest destructor called." << RESET << std::endl;
+	//std::cout << RED << "\t[~] HttpRequest destructor called." << RESET << std::endl;
 }
 
 void	HttpRequest::_parseHeaders(const std::string& line) {

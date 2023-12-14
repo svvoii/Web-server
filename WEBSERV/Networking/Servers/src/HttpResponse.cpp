@@ -6,7 +6,7 @@ HttpResponse::HttpResponse(HttpRequest *httpRequest)
 	: _httpRequest(httpRequest), 
 	_response("") {
 
-	std::cout << MAGENTA << "\tHttpResponse constructor called." << RESET << std::endl;
+	//std::cout << MAGENTA << "\tHttpResponse constructor called." << RESET << std::endl;
 
 	_responseGenerators[GET] = &HttpResponse::_generateGetResponse;
 	_responseGenerators[POST] = &HttpResponse::_generatePostResponse;
@@ -18,12 +18,12 @@ HttpResponse::HttpResponse(HttpRequest *httpRequest)
 
 HttpResponse::~HttpResponse() {
 
-	std::cout << RED << "\t[~] HttpResponse destructor called." << RESET << std::endl;
+	//std::cout << RED << "\t[~] HttpResponse destructor called." << RESET << std::endl;
 }
 
 void	HttpResponse::_generateGetResponse() {
 
-	std::cout << CYAN << "in _generateGetResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
+	//std::cout << CYAN << "in _generateGetResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
 	std::ostringstream oss;
 
 	if (_httpRequest->getUri() == "/") {
@@ -44,7 +44,7 @@ void	HttpResponse::_generateGetResponse() {
 
 void	HttpResponse::_generatePostResponse() {
 
-	std::cout << CYAN << "in _generatePostResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
+	//std::cout << CYAN << "in _generatePostResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
 
 	// TODO: Implement POST response
 	// 201 Created
@@ -78,21 +78,21 @@ void	HttpResponse::_generatePostResponse() {
 
 void	HttpResponse::_generatePutResponse() {
 
-	std::cout << CYAN << "in _generatePutResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
+	//std::cout << CYAN << "in _generatePutResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
 
 	// TODO: Implement PUT response
 }
 
 void	HttpResponse::_generateDeleteResponse() {
 
-	std::cout << CYAN << "in _generateDeleteResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
+	//std::cout << CYAN << "in _generateDeleteResponse()..\tpath:" << RESET << "[" << _httpRequest->getUri() << "]" << std::endl;
 
 	// TODO: Implement DELETE response
 }
 
 void	HttpResponse::_generateOptionsResponse() {
 
-	std::cout << CYAN << "in _generateOptionsResponse().." << RESET << std::endl;
+	//std::cout << CYAN << "in _generateOptionsResponse().." << RESET << std::endl;
 
 	_response = _httpRequest->getHttpVersion() + " ";
 	std::stringstream ss;
@@ -116,7 +116,7 @@ std::string		HttpResponse::getResponse() {
 
 	enum requestMethod	method = _httpRequest->isMethod(_httpRequest->getMethod());
 
-	std::cout << CYAN << "in getResponse().. method:[" << _httpRequest->getMethod() << "]" << RESET << std::endl;
+	//std::cout << CYAN << "in getResponse().. method:[" << _httpRequest->getMethod() << "]" << RESET << std::endl;
 
 	if (method != NONE) {
 		(this->*_responseGenerators[method])();
