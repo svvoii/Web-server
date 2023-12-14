@@ -117,7 +117,12 @@ void	HttpServer::_respond(int fd) {
 /*
 ** This is the main loop of the server with the `select()` function.
 **
-** Currently not working properly.. need to fix it.
+** The `select()` function is used to monitor multiple file descriptors, 
+** waiting until one or more of the file descriptors become "ready" 
+** for some class of I/O operation (e.g., input possible).
+** `fcntl()` is used to set the socket to non-blocking mode, 
+** This is the main requiremnt for this project.
+**
 */
 void	HttpServer::run() {
 

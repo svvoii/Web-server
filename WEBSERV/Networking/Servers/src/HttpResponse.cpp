@@ -29,11 +29,9 @@ void	HttpResponse::_generateGetResponse() {
 	if (_httpRequest->getUri() == "/") {
 		_GetDefaultPath(oss);
 	}
-	/*
 	else if (_httpRequest->getUri() == "/favicon.ico") {
 		_GetFavicon(oss);
 	}
-	*/
 	else {
 		_notFound(oss);
 	}
