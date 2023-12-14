@@ -8,6 +8,8 @@
 #include <unistd.h> // close()
 #include <sys/socket.h> // socket(), bind(), listen(), accept()
 #include <netinet/in.h> // sockaddr_in, INADDR_ANY
+#include <sys/types.h>  // for u_long
+#include <sys/select.h> // for fd_set
 
 // SOME COLORS FOR DEBUGGING
 #define RED "\033[1;31m"
