@@ -5,17 +5,21 @@ CXX = c++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -g
 
 VPATH = Sockets/src \
-		Servers/src
+		Servers/src \
+		Config \
 
 SRCS = main.cpp \
 	SimpleSocket.cpp \
 	BindingSocket.cpp \
 	ListeningSocket.cpp \
 	ConnectingSocket.cpp \
-	SimpleServer.cpp \
-	HttpServer.cpp \
 	HttpRequest.cpp \
 	HttpResponse.cpp \
+	Server.cpp \
+	ServerManager.cpp \
+	Config.cpp \
+#	SimpleServer.cpp \
+	HttpServer.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

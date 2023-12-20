@@ -3,18 +3,18 @@
 Config::Config() 
 	: _filePath("") {
 
-		std::cout << "Config default constructor called" << std::endl;
+		std::cout << MAGENTA << "\tConfig default constructor called" << RESET << std::endl;
 }
 
 Config::Config(std::string filePath) 
 	: _filePath(filePath) {
 		
-		std::cout << "Config constructor called" << std::endl;
+		std::cout << MAGENTA << "\tConfig with filePath constructor called" << RESET << std::endl;
 }
 
 Config::~Config() {
 	
-	std::cout << "Config destructor called" << std::endl;
+	std::cout << RED << "\tConfig destructor called" << RESET << std::endl;
 }
 
 void	Config::setFilePath(std::string filePath) {

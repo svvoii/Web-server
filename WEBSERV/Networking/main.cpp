@@ -1,5 +1,5 @@
 #include "Sockets/HeaderSockets.hpp"
-#include "Servers/includes/HttpServer.hpp"
+#include "Servers/includes/ServersManager.hpp"
 
 #define PROTOCOL 0
 #define PORT 8080
@@ -22,5 +22,10 @@ int	main() {
 	//TestServer	server;
 	
 	// All arguments are for TESTING PURPOSES, declared in `TestServer.hpp`
-	HttpServer server(AF_INET, SOCK_STREAM, PROTOCOL, PORT, INADDR_ANY, BACKLOG);
+	//HttpServer server(AF_INET, SOCK_STREAM, PROTOCOL, PORT, INADDR_ANY, BACKLOG);
+
+	// Several servers test
+	ServersManager	serverManager;
+
+	return 0;
 }

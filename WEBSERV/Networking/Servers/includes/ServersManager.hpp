@@ -37,9 +37,9 @@ class ServersManager {
 		void							_removeFromSet(int fd, fd_set *set);
 		void							_closeConnection(int fd);
 
-		void							_accept(int fd);
-		void							_handle(int fd);
-		void							_respond(int fd);
+		void							_accept(int serverIndex, int fd);
+		void							_handle(int serverIndex, int fd);
+		void							_respond(int serverIndex, int fd);
 
 	public:
 

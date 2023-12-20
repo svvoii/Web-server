@@ -17,7 +17,8 @@
 #include <vector>
 #include <map>
 
-#include "Server.hpp"
+//#include "../Servers/includes/Server.hpp"
+#include "../Sockets/HeaderSockets.hpp" // for COLORS
 
 typedef struct	s_locationsData {
 
