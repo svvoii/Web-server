@@ -42,29 +42,21 @@ typedef struct	s_serverData {
 } t_serverData;
 
 class Config {
-	private:
-
-		std::string					_filePath;
-
-		int							_numberOfServers;
-		std::vector<t_serverData>	_serversData;
-
 	public:
+
+		std::string					filePath;
+
+		std::vector<t_serverData>	serversData;
+		int							numberOfServers;
 
 		Config();
 		Config(std::string filePath);
 		~Config();
 
-		
-
 		// Setters
 		void						setFilePath(std::string filePath);
 		void						setServersData();
 		void						setNumberOfServers(int number);
-
-		// Getters
-		int							getNumberOfServers() const;
-		std::vector<t_serverData> 	getServersData() const;
 
 };
 

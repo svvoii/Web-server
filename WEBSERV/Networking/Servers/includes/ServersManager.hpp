@@ -19,7 +19,15 @@
 #include <arpa/inet.h> // inet_ntoa
 #include <fcntl.h> // fcntl
 #include <map> // std::map
+#include <list> // std::list
 #include <ctime> // std::time_t
+
+typedef struct s_buffer {
+	
+	int				serverFd;
+	std::string		requestBuffer;
+	std::string		responseBuffer;
+} t_buffer;
 
 class ServersManager {
 	private:
@@ -27,6 +35,7 @@ class ServersManager {
 		Config							_config;
 		int								_numberOfServers;
 		std::vector<Server>				_servers;
+		//std::list<Server>				_serversList;
 
 		fd_set							_recv_fd_pool; // To store the socket FDs of the clients
 		fd_set							_send_fd_pool; // To store the socket FDs of the clients
@@ -37,22 +46,31 @@ class ServersManager {
 		void							_removeFromSet(int fd, fd_set *set);
 		void							_closeConnection(int fd);
 
+		void							_accept(int fd);
+		void							_handle(int fd);
+		void							_respond(int fd);
+		/*
 		void							_accept(int serverIndex, int fd);
 		void							_handle(int serverIndex, int fd);
 		void							_respond(int serverIndex, int fd);
+		*/
 
 	public:
 
 		ServersManager();
 		~ServersManager();
 
-		// Setters
-		void					setServers();
+		std::map<int, t_buffer>		clientsMap;
+		bool					isClient(int fd);
 
 		// Main logic to run the servers, receive, handle and respond to the requests
 		std::string				timeStamp();
 		void					checkErrorAndExit(int returnValue, const std::string& msg);
 		void					run();
+
+		// Setters
+		void					initConfig();
+		void					initServers();
 
 };
 

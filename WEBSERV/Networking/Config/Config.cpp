@@ -1,13 +1,13 @@
 #include "Config.hpp"
 
 Config::Config() 
-	: _filePath("") {
+	: filePath("") {
 
 		std::cout << MAGENTA << "\tConfig default constructor called" << RESET << std::endl;
 }
 
 Config::Config(std::string filePath) 
-	: _filePath(filePath) {
+	: filePath(filePath) {
 		
 		std::cout << MAGENTA << "\tConfig with filePath constructor called" << RESET << std::endl;
 }
@@ -19,7 +19,7 @@ Config::~Config() {
 
 void	Config::setFilePath(std::string filePath) {
 
-	this->_filePath = filePath;
+	this->filePath = filePath;
 }
 
 /*
@@ -57,7 +57,7 @@ void	Config::setServersData() {
 
 	s01.locations_map[location_s01_l02.location] = location_s01_l02;
 
-	this->_serversData.push_back(s01);
+	this->serversData.push_back(s01);
 
 	// This is the data for the second server
 	t_serverData	s02;
@@ -89,7 +89,7 @@ void	Config::setServersData() {
 
 	s02.locations_map[location_s02_l02.location] = location_s02_l02;
 
-	this->_serversData.push_back(s02);
+	this->serversData.push_back(s02);
 
 	// This is the data for the third server
 	t_serverData	s03;
@@ -107,24 +107,14 @@ void	Config::setServersData() {
 
 	s03.locations_map[location_s03_l01.location] = location_s03_l01;
 
-	this->_serversData.push_back(s03);
+	this->serversData.push_back(s03);
 
 	// ...
 
-	setNumberOfServers(this->_serversData.size());
+	setNumberOfServers(this->serversData.size());
 }
 
 void	Config::setNumberOfServers(int number) {
 
-	this->_numberOfServers = number;
-}
-
-int	Config::getNumberOfServers() const {
-
-	return this->_numberOfServers;
-}
-
-std::vector<t_serverData>	Config::getServersData() const {
-
-	return this->_serversData;
+	this->numberOfServers = number;
 }

@@ -1,25 +1,49 @@
 #include "../includes/ServersManager.hpp"
 
 ServersManager::ServersManager() {
-
 	std::cout << MAGENTA << "\tServersManager default constructor called" << RESET << std::endl;
 
-	_numberOfServers = _config.getNumberOfServers();
+	initConfig();
 
-	// This function is for testing purposes only !!!
-	// The hardcoded data shall be parsed from the config file.
-	_config.setServersData();
+	initServers();
 
-	std::cout << YELLOW << "[!] Number of servers: " << _numberOfServers << RESET << std::endl;
+	// DEBUG PRINT SERVERS DATA
+	for (int i = 0; i < _numberOfServers; i++) {
 
-	//_servers.reserve(_numberOfServers);
+		_servers[i].printServerData();
+	}
 
-	setServers();
+	run();
 }
 
 ServersManager::~ServersManager() {
 
 	std::cout << RED << "\tServersManager destructor called" << RESET << std::endl;
+}
+
+void	ServersManager::initConfig() {
+
+	// This function is for testing purposes only !!!
+	// The hardcoded data in `Config` class shall be parsed from the config file.
+	_config.setServersData();
+	_numberOfServers = _config.numberOfServers;
+
+	std::cout << YELLOW << "[!] Number of servers: " << _numberOfServers << RESET << std::endl;
+
+}
+
+void	ServersManager::initServers() {
+	
+	_servers.reserve(_numberOfServers);
+	
+	for (int i = 0; i < _numberOfServers; i++) {
+
+		_servers.push_back(Server(&_config.serversData[i]));
+
+		_servers[i].initServerSocket();
+
+	}
+
 }
 
 void	ServersManager::_initFdSets() {
@@ -69,17 +93,7 @@ void	ServersManager::_closeConnection(int fd) {
 		_removeFromSet(fd, &_send_fd_pool);
 	}
 	close(fd);
-}
-
-
-void	ServersManager::setServers() {
-
-	std::vector<t_serverData>	serversData = _config.getServersData();
-
-	for (int i = 0; i < _numberOfServers; i++) {
-
-		_servers.push_back(Server(&serversData[i]));
-	}
+	clientsMap.erase(fd);
 }
 
 std::string	ServersManager::timeStamp() {
@@ -106,7 +120,6 @@ void	ServersManager::run() {
 	fd_set	recv_fd_pool_copy;
 	fd_set	send_fd_pool_copy;
 	int		select_ret = 0;
-	int		serverFd = 0;
 
 	_initFdSets();
 
@@ -118,43 +131,37 @@ void	ServersManager::run() {
 		select_ret = select(_max_fd + 1, &recv_fd_pool_copy, &send_fd_pool_copy, NULL, NULL);
 		checkErrorAndExit(select_ret, "select() failed. Exiting..");
 
-		for (int s = 0; s < _numberOfServers; s++) {
+		for (int fd = 3; fd <= _max_fd; fd++) {
 
-			serverFd = _servers[s].getServerFd();	
+			if (FD_ISSET(fd, &recv_fd_pool_copy) && !isClient(fd)) {
 
-			for (int fd = 3; fd <= _max_fd; fd++) {
+				_accept(fd);
+			}
+			else if (FD_ISSET(fd, &recv_fd_pool_copy) && isClient(fd)) {
 
-				if (FD_ISSET(fd, &recv_fd_pool_copy)) {
+				_handle(fd);
+			}
+			else if (FD_ISSET(fd, &send_fd_pool_copy)) {
 
-					// need tocheck if server index `s` is correct !!?
-					_accept(s, fd);
-				}
-				else if (FD_ISSET(fd, &recv_fd_pool_copy)) {
-
-					// need tocheck if server index `s` is correct !!?
-					_handle(s, fd);
-				}
-				else if (FD_ISSET(fd, &send_fd_pool_copy)) {
-
-					// need tocheck if server index `s` is correct !!?
-					_respond(s, fd);
-				}
+				_respond(fd);
 			}
 		}
 		// check for timeout
 	}
 }
 
-void	ServersManager::_accept(int serverIndex, int fd) {
+void	ServersManager::_accept(int fd) {
 
-	struct sockaddr_in	address; // ??
+	struct sockaddr_in	address;
 	socklen_t			address_len = sizeof(address);
 	int					fcntl_ret = 0;
-	int					serverFd = _servers[serverIndex].getServerFd();
+	int					serverFd = fd;
 
 	fd = accept(serverFd, (struct sockaddr *)&address, (socklen_t *)&address_len);
 	if (fd == -1) {
-		std::cerr << RED << "\t[-] Error accepting connection.. accept() failed." << RESET << std::endl;
+		std::cerr << RED << "\t[-] Error accepting connection.. accept() failed..";
+		std::cerr << " serverFd: [" << serverFd << "], fd:[" << fd << "]" << std::endl;
+		std::cerr << RESET << std::endl;
 		return ;
 	}
 
@@ -169,9 +176,16 @@ void	ServersManager::_accept(int serverIndex, int fd) {
 		return ;
 	}
 
+	t_buffer buff;
+
+	buff.serverFd = serverFd;
+	buff.requestBuffer = "";
+	buff.responseBuffer = "";
+
+	clientsMap.insert(std::make_pair(fd, buff));
 }
 
-void	ServersManager::_handle(int serverIndex, int fd) {
+void	ServersManager::_handle(int fd) {
 
 	char	buffer[BUF_SIZE] = {0};
 	int		bytes_read = 0;
@@ -191,15 +205,14 @@ void	ServersManager::_handle(int serverIndex, int fd) {
 		return ;
 	}
 
-	// check the server index
-	_servers[serverIndex].requestBuffer.assign(buffer, bytes_read);
+	clientsMap[fd].requestBuffer.append(buffer, bytes_read);
 
 	std::cout << CYAN << "[*] Request received from client [" << fd << "]" << RESET << std::endl;
 
-	HttpRequest 	httpRequest(_servers[serverIndex].requestBuffer);
+	HttpRequest 	httpRequest(clientsMap[fd].requestBuffer);
 
 	HttpResponse	response(&httpRequest);
-	_servers[serverIndex].responseBuffer = response.getResponse();
+	clientsMap[fd].responseBuffer = response.getResponse();
 
 	// might need to check if the body is not empty and handle CGI and other stuff
 
@@ -207,12 +220,14 @@ void	ServersManager::_handle(int serverIndex, int fd) {
 	_addToSet(fd, &_send_fd_pool);
 }
 
-void	ServersManager::_respond(int serverIndex, int fd) {
+void	ServersManager::_respond(int fd) {
 
 	int		bytes_sent = 0;
-	int		bytes_to_send = _servers[serverIndex].responseBuffer.length();
+	int		bytes_to_send = clientsMap[fd].responseBuffer.length();
+	//int		bytes_to_send = _servers[serverIndex].responseBuffer.length();
+	//bytes_sent = send(fd, _servers[serverIndex].responseBuffer.c_str(), bytes_to_send, 0);
 
-	bytes_sent = send(fd, _servers[serverIndex].responseBuffer.c_str(), bytes_to_send, 0);
+	bytes_sent = send(fd, clientsMap[fd].responseBuffer.c_str(), bytes_to_send, 0);
 
 	std::cout << timeStamp();
 
@@ -223,7 +238,8 @@ void	ServersManager::_respond(int serverIndex, int fd) {
 	}
 	else if (bytes_sent < bytes_to_send) {
 		std::cout << YELLOW << "[!] Not all data has been sent to the client. " << RESET << std::endl;
-		_servers[serverIndex].responseBuffer.erase(0, bytes_sent);
+		clientsMap[fd].responseBuffer.erase(0, bytes_sent);
+		//_servers[serverIndex].responseBuffer.erase(0, bytes_sent);
 		return ;
 	}
 	else {
@@ -232,5 +248,12 @@ void	ServersManager::_respond(int serverIndex, int fd) {
 
 	_removeFromSet(fd, &_send_fd_pool);
 	_addToSet(fd, &_recv_fd_pool);
+
+	clientsMap[fd].requestBuffer.clear();
+	clientsMap[fd].responseBuffer.clear();
 }
 
+bool	ServersManager::isClient(int fd) {
+
+	return clientsMap.count(fd) > 0;
+}

@@ -26,6 +26,7 @@
 class Server {
 	private:
 
+		ListeningSocket							*_serverSocket;
 		int										_serverFd;
 		int										_port;
 		std::string								_serverName;
@@ -34,15 +35,18 @@ class Server {
 		
 	public:
 		//Server();
-		Server(t_serverData *serverData);
+		Server(t_serverData * serverData);
 		~Server();
 
-		ListeningSocket		serverSocket;
-		std::string			requestBuffer; // To store the request from the browser
-		std::string			responseBuffer; // To store the response to the browser
+		// Setters
+		void				initServerSocket();
 
 		// Getters
+		ListeningSocket		*getServerSocket() const;
 		int					getServerFd() const;
+
+		// DEBUG
+		void				printServerData() const;
 
 };
 
