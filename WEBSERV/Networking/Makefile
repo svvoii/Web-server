@@ -16,10 +16,8 @@ SRCS = main.cpp \
 	HttpRequest.cpp \
 	HttpResponse.cpp \
 	Server.cpp \
-	ServerManager.cpp \
+	ServersManager.cpp \
 	Config.cpp \
-#	SimpleServer.cpp \
-	HttpServer.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

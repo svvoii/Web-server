@@ -44,6 +44,7 @@ class Server {
 		// Getters
 		ListeningSocket		*getServerSocket() const;
 		int					getServerFd() const;
+		std::string			getServerName() const;
 
 		// DEBUG
 		void				printServerData() const;

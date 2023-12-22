@@ -36,6 +36,11 @@ int		Server::getServerFd() const {
 	return _serverFd;
 }
 
+std::string	Server::getServerName() const {
+
+	return _serverName;
+}
+
 /*
 ** This function is for testing purposes only !!!
 ** PRINTS THE SERVER DATA

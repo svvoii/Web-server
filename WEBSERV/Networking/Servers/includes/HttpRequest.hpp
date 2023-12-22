@@ -73,7 +73,7 @@ class HttpRequest {
 
 #endif
 
-/* EXAMPLE OF A POST REQUEST FROM THE BROWSER:
+/* EXAMPLE OF MAKING A POST REQUEST FROM THE BROWSER:
 **
 ** in the browser console execute the following:
 

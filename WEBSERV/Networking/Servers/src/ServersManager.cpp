@@ -40,6 +40,7 @@ void	ServersManager::initServers() {
 
 		_servers.push_back(Server(&_config.serversData[i]));
 
+		// the following initialization creates an instance of ListeningSocket on the heap
 		_servers[i].initServerSocket();
 
 	}
@@ -84,7 +85,7 @@ void	ServersManager::_removeFromSet(int fd, fd_set *set) {
 }
 
 void	ServersManager::_closeConnection(int fd) {
-	std::cout << YELLOW << "[!] Closing connection fd [" << fd << "] on the server side." << RESET << std::endl;
+	std::cout << timeStamp() << YELLOW << "[!] Closing connection with fd:[" << fd << "]." << RESET << std::endl;
 
 	if (FD_ISSET(fd, &_recv_fd_pool)) {
 		_removeFromSet(fd, &_recv_fd_pool);
@@ -144,9 +145,11 @@ void	ServersManager::run() {
 			else if (FD_ISSET(fd, &send_fd_pool_copy)) {
 
 				_respond(fd);
+
+				// CGI handling ?!
 			}
 		}
-		// check for timeout
+		// check for timeout ?!
 	}
 }
 
@@ -165,7 +168,7 @@ void	ServersManager::_accept(int fd) {
 		return ;
 	}
 
-	std::cout << timeStamp() << GREEN << " [+] New connection accepted on server [" << serverFd << "] from client [" << fd << "] with IP: " << inet_ntoa(address.sin_addr) << RESET << std::endl;
+	std::cout << timeStamp() << GREEN << "[+] New connection to [" << _servers[serverFd - 3].getServerName() << "] fd:[" << serverFd << "], client fd:[" << fd << "], IP:[" << inet_ntoa(address.sin_addr) << "]" << RESET << std::endl;
 
 	_addToSet(fd, &_recv_fd_pool);
 
@@ -195,7 +198,8 @@ void	ServersManager::_handle(int fd) {
 	std::cout << timeStamp();
 
 	if (bytes_read == 0) {
-		std::cout << YELLOW << "[!] Connection closed by the client. ";
+		std::cout << YELLOW << "[!] bytes_read == 0 from client fd:[" << fd << "]" << RESET << std::endl;
+		//std::cout << YELLOW << "[!] Connection closed by the client. ";
 		_closeConnection(fd);
 		return ;
 	}
@@ -207,7 +211,7 @@ void	ServersManager::_handle(int fd) {
 
 	clientsMap[fd].requestBuffer.append(buffer, bytes_read);
 
-	std::cout << CYAN << "[*] Request received from client [" << fd << "]" << RESET << std::endl;
+	std::cout << CYAN << "[*] Request received from client fd:[" << fd << "]" << RESET << std::endl;
 
 	HttpRequest 	httpRequest(clientsMap[fd].requestBuffer);
 
@@ -224,8 +228,6 @@ void	ServersManager::_respond(int fd) {
 
 	int		bytes_sent = 0;
 	int		bytes_to_send = clientsMap[fd].responseBuffer.length();
-	//int		bytes_to_send = _servers[serverIndex].responseBuffer.length();
-	//bytes_sent = send(fd, _servers[serverIndex].responseBuffer.c_str(), bytes_to_send, 0);
 
 	bytes_sent = send(fd, clientsMap[fd].responseBuffer.c_str(), bytes_to_send, 0);
 
@@ -239,11 +241,10 @@ void	ServersManager::_respond(int fd) {
 	else if (bytes_sent < bytes_to_send) {
 		std::cout << YELLOW << "[!] Not all data has been sent to the client. " << RESET << std::endl;
 		clientsMap[fd].responseBuffer.erase(0, bytes_sent);
-		//_servers[serverIndex].responseBuffer.erase(0, bytes_sent);
 		return ;
 	}
 	else {
-		std::cout << GREEN << "[+] Response sent to client, socket:[" << fd << "]" << RESET << std::endl;
+		std::cout << GREEN << "[+] Response sent to client fd:[" << fd << "]" << RESET << std::endl;
 	}
 
 	_removeFromSet(fd, &_send_fd_pool);
